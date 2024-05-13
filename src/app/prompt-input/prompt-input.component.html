@@ -1,0 +1,39 @@
+<div class="container">
+<div class="example-button-row">
+  <button mat-raised-button color="primary"  (click)="surprise()">Surprise me</button>
+  </div>
+  @if (prompt.length > 0) {
+    <button (click)="getResponseFromAI('GEMINI')"  mat-raised-button>Ask Gemini</button>
+    <button (click)="getResponseFromAI('OPENAI')"  mat-raised-button>Ask OpenAI</button>
+  }
+  @if(clearStatus){
+  <button (click)="clear()" mat-raised-button>Clear</button>
+  }
+<div class="input-container">
+  <input type="text" [(ngModel)]="prompt" placeholder="When is Xmas...?" />
+</div>
+@for (message of messages(); track message.id) {
+  <pre
+    class="message"
+    [ngClass]="{
+      'from-user': message.fromUser,
+      generating: message.generating
+    }"
+    >{{ message.text }}</pre
+  >
+}
+
+<form #form="ngForm" (ngSubmit)="sendMessage(form, form.value.message)">
+  <input
+    name="message"
+    placeholder="Type a message"
+    ngModel
+    required
+    autofocus
+    [disabled]="generatingInProgress()"
+  />
+  <button type="submit" [disabled]="generatingInProgress() || form.invalid">
+    Send
+  </button>
+</form>
+</div>

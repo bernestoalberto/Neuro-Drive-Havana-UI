@@ -1,0 +1,10 @@
+<div class="search-result">
+  @for(chatItem of chatHistory; track $index) {
+  <div>
+    <p class="answer">{{ chatItem.parts }}</p>
+  </div>
+}
+@empty {
+  <p> Results will appear here.</p>
+}
+</div>

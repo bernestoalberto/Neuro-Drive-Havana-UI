@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="app">
+    <h1>What do you want to know?</h1>
+     <app-prompt-input
+     [errorMessage]="error"
+     (errorMessageEvent)="getErrorMessage($event)"
+      (showSpinnerEvent)="setSpinnerStatus($event)"
+      (chatHistoryEvent)="setChatHistory($event)"
+      ></app-prompt-input>
+      @if(showSpinner){
+        <app-loading-spinner></app-loading-spinner>
+        }
+     <app-image-upload></app-image-upload>
+     <app-error-result [errorMessage]="error"></app-error-result>
+     <app-search-result [chatHistory]="chatHistory"></app-search-result>
+   </div>
+  </div>
+  <router-outlet></router-outlet>
