@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "appconex-d8cb0": {
+      "hosting": {
+        "bonetgenai": [
+          "appconex-d8cb0"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "appconex-d8cb0"
+  }
+}

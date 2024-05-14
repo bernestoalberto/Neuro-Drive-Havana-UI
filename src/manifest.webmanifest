@@ -1,6 +1,6 @@
 {
-  "name": "bonet-gen-ai",
-  "short_name": "bonet-gen-ai",
+  "name": "bonetGenAI",
+  "short_name": "bonetGenAI",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",

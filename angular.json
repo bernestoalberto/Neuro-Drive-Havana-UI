@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "bonetGenAI": {
+    "bonetgenai": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -27,7 +27,8 @@
             "inlineStyleLanguage": "sass",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
@@ -89,7 +90,8 @@
             "inlineStyleLanguage": "sass",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
@@ -97,6 +99,23 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "version": 2
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "bonetgenai:build:production",
+              "serveTarget": "bonetgenai:serve:production"
+            },
+            "development": {
+              "buildTarget": "bonetgenai:build:development",
+              "serveTarget": "bonetgenai:serve:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }
