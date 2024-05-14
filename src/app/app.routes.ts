@@ -17,12 +17,14 @@ export const routes: Routes = [
   // { path: 'product/:id', component: ProductComponent },
   // { path: 'cart', component: CartComponent },
   // { path: 'checkout', component: CheckoutComponent },
-  // {path: 'query', component: PromptInputComponent, canActivate: [authGuard], children: [
-  //   {path: 'image-generation', component: ImageUploadComponent,
-        // resolve:[promptResolver]
-  //   }
+  // {path: 'query', component: PromptInputComponent,
+  //  canActivate: [authGuard],
+  //  children: [
+  // {path: 'image-generation', component: ImageUploadComponent,
+  //       resolve:[promptResolver]
+  // }
   // ]},
   // { path: 'not-found', component: PageNotFoundComponent  , data: {message: 'Page not found!'} },
-  // { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent },
   // { path: 'register', component: RegisterComponent, pathMatch: 'full' }
 ];

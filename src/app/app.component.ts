@@ -1,20 +1,5 @@
-// import { Component } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { RouterOutlet } from '@angular/router';
-
-// @Component({
-//   selector: 'app-root',
-//   standalone: true,
-//   imports: [CommonModule, RouterOutlet],
-//   templateUrl: './app.component.html',
-//   styleUrl: './app.component.scss'
-// })
-// export class AppComponent {
-//   title = 'bonetGenAI';
-// }
-
-import { Component, Inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { PromptInputComponent } from './prompt-input/prompt-input.component';
 import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
 import { ErrorResultComponent } from './error-result/error-result.component';
@@ -24,10 +9,11 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppService, Post } from './app.service';
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
 import { CommonModule } from '@angular/common';
+import { LoginComponent } from './auth/login/login.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, PromptInputComponent, LoadingSpinnerComponent, ErrorResultComponent, ImageUploadComponent, SearchResultComponent, HttpClientModule],
+  imports: [CommonModule, RouterOutlet, PromptInputComponent, LoadingSpinnerComponent, ErrorResultComponent, ImageUploadComponent, SearchResultComponent, HttpClientModule, RouterLink, RouterLinkActive, LoginComponent],
   providers: [
     AppService,
     {provide: HTTP_INTERCEPTORS, multi: true , useClass: AuthInterceptorService}
