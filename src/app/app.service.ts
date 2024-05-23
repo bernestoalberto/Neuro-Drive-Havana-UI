@@ -4,7 +4,7 @@ import { Observable, Subject, filter, map, startWith } from 'rxjs';
 import { AI, AI_NAME } from './prompt-input/helper';
 
 
-type ModelAnswer = {
+type ModelAnswer = {nvm 
   parts: any
 };
 export interface Message {
