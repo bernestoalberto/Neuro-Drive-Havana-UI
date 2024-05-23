@@ -25,6 +25,6 @@ export const routes: Routes = [
   // }
   // ]},
   // { path: 'not-found', component: PageNotFoundComponent  , data: {message: 'Page not found!'} },
-  { path: 'login', component: LoginComponent },
+  // { path: 'login', component: LoginComponent },
   // { path: 'register', component: RegisterComponent, pathMatch: 'full' }
 ];

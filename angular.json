@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/bonet-gen-ai",
+            "outputPath": "dist/bonetgenai",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "bonetGenAI:build:production"
+              "buildTarget": "bonetgenai:build:production"
             },
             "development": {
-              "buildTarget": "bonetGenAI:build:development"
+              "buildTarget": "bonetgenai:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -76,7 +76,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "bonetGenAI:build"
+            "buildTarget": "bonetgenai:build"
           }
         },
         "test": {
