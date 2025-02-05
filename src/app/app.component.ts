@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { PromptInputComponent } from './prompt-input/prompt-input.component';
 import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
 import { ErrorResultComponent } from './error-result/error-result.component';
@@ -12,8 +12,8 @@ import { CommonModule } from '@angular/common';
 import { LoginComponent } from './auth/login/login.component';
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet, PromptInputComponent, LoadingSpinnerComponent, ErrorResultComponent, ImageUploadComponent, SearchResultComponent, HttpClientModule, RouterLink, RouterLinkActive, LoginComponent],
+
+  imports: [CommonModule, RouterOutlet, PromptInputComponent, LoadingSpinnerComponent, ErrorResultComponent, ImageUploadComponent, SearchResultComponent, HttpClientModule, LoginComponent],
   providers: [
     AppService,
     {provide: HTTP_INTERCEPTORS, multi: true , useClass: AuthInterceptorService}

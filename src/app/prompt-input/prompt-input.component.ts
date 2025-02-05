@@ -15,7 +15,7 @@ import { AI, AI_NAME } from './helper';
 
 @Component({
   selector: 'app-prompt-input',
-  standalone: true,
+
   imports: [CommonModule, FormsModule, HttpClientModule, MatButtonModule, MatIconModule, MatIconModule, MatTooltipModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule
   ],
   templateUrl: './prompt-input.component.html',

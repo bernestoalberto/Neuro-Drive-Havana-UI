@@ -7,7 +7,7 @@ import { ThemePalette } from '@angular/material/core';
 
 @Component({
   selector: 'app-image-upload',
-  standalone: true,
+
   imports: [CommonModule, MatProgressBarModule],
   templateUrl: './image-upload.component.html',
   styleUrl: './image-upload.component.sass'

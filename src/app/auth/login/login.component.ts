@@ -8,7 +8,7 @@ import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
+
   imports: [LoadingSpinnerComponent, FormsModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.sass'

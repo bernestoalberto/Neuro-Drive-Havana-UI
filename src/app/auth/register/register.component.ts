@@ -10,7 +10,7 @@ import { LoadingSpinnerComponent } from "../../shared/loading-spinner/loading-sp
 
 @Component({
     selector: 'app-register',
-    standalone: true,
+
     templateUrl: './register.component.html',
     styleUrl: './register.component.sass',
     changeDetection: ChangeDetectionStrategy.OnPush,

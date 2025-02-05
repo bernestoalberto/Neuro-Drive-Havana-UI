@@ -13,7 +13,7 @@ import { map, shareReplay } from 'rxjs/operators';
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.css',
-  standalone: true,
+
   imports: [
     MatToolbarModule,
     MatButtonModule,
