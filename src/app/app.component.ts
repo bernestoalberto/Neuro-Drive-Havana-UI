@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ViewEncapsulation } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PromptInputComponent } from './prompt-input/prompt-input.component';
 import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 import { LoginComponent } from './auth/login/login.component';
 @Component({
   selector: 'app-root',
-
+  encapsulation: ViewEncapsulation.ShadowDom,
   imports: [CommonModule, RouterOutlet, PromptInputComponent, LoadingSpinnerComponent, ErrorResultComponent, ImageUploadComponent, SearchResultComponent, HttpClientModule, LoginComponent],
   providers: [
     AppService,
@@ -22,6 +22,11 @@ import { LoginComponent } from './auth/login/login.component';
   styleUrl: './app.component.sass',
 })
 export class AppComponent {
+
+  @HostListener('document:copy', ['$event'])
+  onDocumentCopy(event: ClipboardEvent) {
+    event.preventDefault();
+  }
   title = 'bonet-gen-ai';
   chatHistory: any[] = [];
   loadedPost: Post[] = [];

@@ -4,7 +4,7 @@ import { Observable, Subject, filter, map, startWith } from 'rxjs';
 import { AI, AI_NAME } from './prompt-input/helper';
 
 
-type ModelAnswer = { 
+type ModelAnswer = {
   parts: any
 };
 export interface Message {
@@ -19,7 +19,7 @@ export interface Post {
   content: string;
 }
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AppService {
 
