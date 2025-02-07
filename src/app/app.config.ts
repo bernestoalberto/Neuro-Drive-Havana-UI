@@ -56,13 +56,14 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     // use `fetch` behind the scenes to support streaming partial responses
     {provide: CSP_NONCE, useValue: 'nonce'},
+    provideAnimationsAsync(),
     provideHttpClient(
     withInterceptors([ logginInterceptor, cachingInterceptor]),
+    // withViewTransitions(),
     withXsrfConfiguration({
       cookieName: 'CUSTOM_XSRF_TOKEN',
       headerName: 'X-Custom-Xsrf-Header',
-    }),
-    withViewTransitions()
+    })
     // withFetch()
     ),
     importProvidersFrom(
