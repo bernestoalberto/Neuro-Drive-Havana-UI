@@ -8,12 +8,12 @@ import { SearchResultComponent } from './search-result/search-result.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppService, Post } from './app.service';
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
-import { CommonModule } from '@angular/common';
+
 import { LoginComponent } from './auth/login/login.component';
 @Component({
   selector: 'app-root',
   encapsulation: ViewEncapsulation.ShadowDom,
-  imports: [CommonModule, RouterOutlet, PromptInputComponent, LoadingSpinnerComponent, ErrorResultComponent, ImageUploadComponent, SearchResultComponent, HttpClientModule, LoginComponent],
+  imports: [RouterOutlet, PromptInputComponent, LoadingSpinnerComponent, ErrorResultComponent, ImageUploadComponent, SearchResultComponent, HttpClientModule, LoginComponent],
   providers: [
     AppService,
     {provide: HTTP_INTERCEPTORS, multi: true , useClass: AuthInterceptorService}

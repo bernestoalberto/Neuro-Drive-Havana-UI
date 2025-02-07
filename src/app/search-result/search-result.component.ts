@@ -1,10 +1,10 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-search-result',
 
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './search-result.component.html',
   styleUrl: './search-result.component.sass'
 })

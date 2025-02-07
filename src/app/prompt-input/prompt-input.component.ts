@@ -1,5 +1,5 @@
 import { Component,Input ,Output, EventEmitter, inject, effect, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AppService } from '../app.service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -16,8 +16,7 @@ import { AI, AI_NAME } from './helper';
 @Component({
   selector: 'app-prompt-input',
 
-  imports: [CommonModule, FormsModule, HttpClientModule, MatButtonModule, MatIconModule, MatIconModule, MatTooltipModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule
-  ],
+  imports: [FormsModule, HttpClientModule, MatButtonModule, MatIconModule, MatIconModule, MatTooltipModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule],
   templateUrl: './prompt-input.component.html',
   styleUrl: './prompt-input.component.sass',
 })
