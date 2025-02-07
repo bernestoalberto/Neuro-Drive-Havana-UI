@@ -34,9 +34,12 @@
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.sass"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/process/browser.js"
+            ],
             "allowedCommonJsDependencies": [
-             "lodash"
+             "lodash",
+             "process"
      ]
           },
           "configurations": {

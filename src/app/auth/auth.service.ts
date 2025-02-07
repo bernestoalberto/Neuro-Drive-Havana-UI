@@ -45,7 +45,7 @@ export class AuthService {
   // }
 
   signup(email: string, password: string): Observable<AuthResponseData> {
-    const url = `identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey}`;
+    const url = `identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseConfig.apiKey}`;
     return this.http.post<AuthResponseData>(url, {email, password, returnSecureToken: true}).pipe(
       catchError(this.handleError),
       tap(resData => {
@@ -61,7 +61,7 @@ export class AuthService {
   login(email: string, password: string) {
     return this.http
       .post<AuthResponseData>(
-        `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${environment.firebaseAPIKey}`,
+        `${environment.FIRE_BASE_URL}${environment.firebaseConfig.apiKey}`,
         {
           email: email,
           password: password,
