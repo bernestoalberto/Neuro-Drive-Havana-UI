@@ -12,11 +12,12 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { AI, AI_NAME } from './helper';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-prompt-input',
 
-  imports: [FormsModule, HttpClientModule, MatButtonModule, MatIconModule, MatIconModule, MatTooltipModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule],
+  imports: [FormsModule, HttpClientModule, MatButtonModule, MatIconModule, MatIconModule, MatTooltipModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule, CommonModule],
   templateUrl: './prompt-input.component.html',
   styleUrl: './prompt-input.component.sass',
 })

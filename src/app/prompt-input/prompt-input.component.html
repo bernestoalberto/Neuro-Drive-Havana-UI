@@ -19,8 +19,7 @@
       'from-user': message.fromUser,
       generating: message.generating
     }"
-    >{{ message.text }}</pre
-  >
+    >{{ message.text }}</pre>
 }
 
 <form #form="ngForm" (ngSubmit)="sendMessage(form, form.value.message)">
