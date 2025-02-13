@@ -188,6 +188,10 @@ export class AuthService {
   //   const userDocRef = doc(this._firestore, `users/${user.id}`);
   //   return setDoc(userDocRef, user).then(() => user);
   // }
+
+  getAuthToken(): string{
+    return environment.OPENAI_API_KEY;
+  }
 }
 
 

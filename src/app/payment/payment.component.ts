@@ -1,10 +1,7 @@
-import { style } from '@angular/animations';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { window } from 'rxjs';
 import { PaymentService } from './payment.service';
 import { CommonModule } from '@angular/common';
-import { on } from 'process';
 import { TRANSACTION } from './constants';
 
 @Component({
@@ -26,10 +23,10 @@ export class PaymentComponent {
 
  ngOnInit(){
   this.amount = this.paymentService.getTotalAmount();
-  (window as any).paypal.Buttons({
+  paypal.Buttons({
       style: {
-        layout: 'horizontal',
-        color: 'blue',
+        layout: 'vertical',
+        color: 'gold',
         shape: 'rect',
         label: 'paypal'
       },
@@ -59,7 +56,6 @@ export class PaymentComponent {
  }
 
  cancel(){
-  console.log('cancel');
   this.router.navigate(['cart']);
  }
 }

@@ -65,7 +65,6 @@ export class ImageUploadComponent implements OnInit{
         // event.total);
         50);
       } else if (event.type === HttpEventType.Response) {
-        console.log('Image uploaded successfully!');
         // Handle successful upload response here
       }
     });

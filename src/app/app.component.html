@@ -1,19 +1,25 @@
-<div class="container">
-  <app-login></app-login>Helllo
-  <div class="app">
-    <h1>What do you want to know?</h1>
+<!-- <div class="container"> -->
+  <!-- <ng-container class="app">
      <app-prompt-input
      [errorMessage]="error"
      (errorMessageEvent)="getErrorMessage($event)"
       (showSpinnerEvent)="setSpinnerStatus($event)"
       (chatHistoryEvent)="setChatHistory($event)"
       ></app-prompt-input>
-      @if(showSpinner){
+      @if(showSpinner()) {
         <app-loading-spinner></app-loading-spinner>
         }
+      @defer () {
      <app-image-upload></app-image-upload>
+       }
      <app-error-result [errorMessage]="error"></app-error-result>
      <app-search-result [chatHistory]="chatHistory"></app-search-result>
-   </div>
-  </div>
+     @defer () {
+       <app-payment></app-payment>
+       <app-login></app-login>
+     }
+  </ng-container> -->
+  <!-- <ng-container class="app"> -->
+  <!-- </ng-container> -->
+  <!-- </div> -->
   <router-outlet></router-outlet>

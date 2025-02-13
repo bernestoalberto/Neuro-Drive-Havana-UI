@@ -3,8 +3,8 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
 import { FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AuthResponseData } from '../auth.const';
-import { Router } from 'express';
 import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',

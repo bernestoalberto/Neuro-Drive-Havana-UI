@@ -1,16 +1,59 @@
 <div class="container">
-<div class="example-button-row">
-  <button mat-raised-button color="primary"  (click)="surprise()">Surprise me</button>
-  </div>
-  @if (prompt.length > 0) {
-    <button (click)="getResponseFromAI('GEMINI')"  mat-raised-button>Ask Gemini</button>
-    <button (click)="getResponseFromAI('OPENAI')"  mat-raised-button>Ask OpenAI</button>
-  }
-  @if(clearStatus){
-  <button (click)="clear()" mat-raised-button>Clear</button>
-  }
+  <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div class="selector-container">
+ <mat-form-field>
+   <mat-label>AI Providers</mat-label>
+   <mat-select id="ai-provider" [formControlName]="aiProviderControl">
+         @for (ai of aiProviders; track ai.id) {
+           <mat-option   [value]="ai.name">{{ai.name}}</mat-option>
+         }
+   </mat-select>
+ </mat-form-field>
+   </div>
+  <div class="selector-container">
+ <mat-form-field>
+   <mat-label>AI Models</mat-label>
+   <mat-select id="model-list" [formControlName]="modelControl" >
+     @for (group of currentodel; track group) {
+       <mat-optgroup [label]="group.name"
+                     [disabled]="group.disabled">
+         @for (model of group.model; track model) {
+           <mat-option   [value]="model.value">{{model.viewValue}}</mat-option>
+         }
+       </mat-optgroup>
+     }
+   </mat-select>
+ </mat-form-field>
+   </div>
+
+   <!---add model selector ---->
+  @if(showSpinner()) {
+    <app-loading-spinner></app-loading-spinner>
+    }
+
 <div class="input-container">
-  <input type="text" [(ngModel)]="prompt" placeholder="When is Xmas...?" />
+  <textarea id="prompt-area" matInput [formControlName]="promptControl" placeholder="Type your query here" rows="4" cols="80">
+
+  </textarea>
+    <button mat-fab
+    matTooltip="Search the prompt"
+    [disabled]="showSpinner() || form.invalid || isModelFieldEmpty || isPromptFieldEmpty"
+    (submit)="onFormSubmit()"
+    color="secondary"
+    aria-label="Example icon button with a search icon">
+      <mat-icon>search</mat-icon>
+    </button>
+   @if(!isPromptFieldEmpty) {
+    <button mat-fab
+    matTooltip="clear the field"
+    color="secondary"
+    (click)="clearSearch()"
+    [disabled]="showSpinner()"
+    aria-label="Example icon button with a clear icon">
+      <mat-icon>clear</mat-icon>
+    </button>
+  }
+
 </div>
 @for (message of messages(); track message.id) {
   <pre
@@ -21,8 +64,8 @@
     }"
     >{{ message.text }}</pre>
 }
-
-<form #form="ngForm" (ngSubmit)="sendMessage(form, form.value.message)">
+</form>
+<!-- <form #form="ngForm" (ngSubmit)="sendMessage(form, form.value.message)">
   <input
     name="message"
     placeholder="Type a message"
@@ -34,5 +77,10 @@
   <button type="submit" [disabled]="generatingInProgress() || form.invalid">
     Send
   </button>
-</form>
+</form> -->
+
+<app-error-result [errorMessage]="error"></app-error-result>
+<app-search-result [chatHistory]="chatHistory()"></app-search-result>
 </div>
+
+

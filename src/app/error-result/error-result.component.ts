@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
 
   imports: [],
   templateUrl: './error-result.component.html',
-  styleUrl: './error-result.component.sass'
+  styleUrl: './error-result.component.scss'
 })
 export class ErrorResultComponent {
   @Input({required: true}) errorMessage: string = '';

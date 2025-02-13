@@ -1,8 +1,10 @@
 <div class="search-result">
   @for(chatItem of chatHistory; track $index) {
-  <div>
+  <ng-container>
     <p class="answer">{{ chatItem.parts }}</p>
-  </div>
+    <mat-divider></mat-divider>
+    <p class="model">{{ chatItem.model }}</p>
+  </ng-container>
 }
 @empty {
   <p> Results will appear here.</p>

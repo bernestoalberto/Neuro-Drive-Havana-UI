@@ -11,9 +11,8 @@ import { HomeComponent } from './home/home.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home',title: 'Home', component: HomeComponent },
-  // { path: 'about', component: AboutComponent },
   { path: 'prompt',title: 'Prompt' , loadComponent: () => import('./prompt-input/prompt-input.component').then(c => c.PromptInputComponent),
-    canActivate: [authGuard],
+    // canActivate: [authGuard],
     children: [
       {path: 'image-generation', component: ImageUploadComponent,
             resolve:[promptResolver]

@@ -1,1 +1,15 @@
-<p>home works!</p>
+<button mat-flat-button id="query-btn" (click)="router.navigateByUrl('/prompt')">Query </button>
+
+<button mat-flat-button [matMenuTriggerFor]="belowMenu">Image Query </button>
+<mat-menu #belowMenu="matMenu" yPosition="below">
+  <button mat-menu-item>Item 1</button>
+  <button mat-menu-item>Item 2</button>
+</mat-menu>
+
+
+<button mat-flat-button [matMenuTriggerFor]="beforeMenu">Payments</button>
+<mat-menu #beforeMenu="matMenu" xPosition="before">
+  <button mat-menu-item>Item 1</button>
+  <!-- <button mat-menu-item>Item 2</button> -->
+</mat-menu>
+

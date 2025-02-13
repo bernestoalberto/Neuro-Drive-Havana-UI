@@ -1,12 +1,14 @@
 
-import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-search-result',
 
-  imports: [],
+  imports: [CommonModule, MatDividerModule],
   templateUrl: './search-result.component.html',
-  styleUrl: './search-result.component.sass'
+  styleUrl: './search-result.component.scss'
 })
 export class SearchResultComponent {
 
