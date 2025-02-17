@@ -109,17 +109,20 @@ export class AppService {
         'Content-Type': 'application/json'
       },
      };
-     const body = {
-      history,
+     const body = JSON.stringify({
+      query: {
+       history,
       message,
       model
-    };
+      }
+    });
     let url =`http://${window.location.hostname}:8000/gemini`;
-    if(typeOfAI === AI_NAME.OPENAI){
+    if(typeOfAI.toLowerCase().includes(AI_NAME.OPENAI.toLowerCase())){
       url =`http://${window.location.hostname}:8000/openai`;
     }
-      if(typeOfAI === AI_NAME.DEEPSEEK){
-      url =`http://${window.location.hostname}:8000/search`;
+      if(typeOfAI.toLowerCase().includes(AI_NAME.DEEPSEEK.toLowerCase())){
+      // url =`http://${window.location.hostname}:8000/search`;
+      url =`http://192.168.137.2:8000/search`;
     }
 
     return this.http.post(url, body, options);

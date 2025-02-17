@@ -1,3 +1,4 @@
+
 <div class="container">
   <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
   <div class="selector-container">
@@ -31,29 +32,30 @@
     <app-loading-spinner></app-loading-spinner>
     }
 
+
 <div class="input-container">
-  <textarea id="prompt-area" matInput [formControlName]="promptControl" placeholder="Type your query here" rows="4" cols="80">
-
+  <mat-form-field>
+  <textarea id="prompt-area" matInput [formControlName]="promptControl"   placeholder="Type your query here" rows="4"   cols="80">
   </textarea>
-    <button mat-fab
-    matTooltip="Search the prompt"
+  <button
+    mat-icon-button
+    matSuffix
     [disabled]="showSpinner() || form.invalid || isModelFieldEmpty || isPromptFieldEmpty"
-    (submit)="onFormSubmit()"
-    color="secondary"
-    aria-label="Example icon button with a search icon">
-      <mat-icon>search</mat-icon>
-    </button>
-   @if(!isPromptFieldEmpty) {
-    <button mat-fab
-    matTooltip="clear the field"
-    color="secondary"
+    (click)="onFormSubmit()"
+    [attr.aria-label]="'Search Results'"
+    [attr.aria-pressed]="hide()">
+    <mat-icon>search</mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    matSuffix
+    [disabled]="showSpinner() || form.invalid || isModelFieldEmpty || isPromptFieldEmpty"
     (click)="clearSearch()"
-    [disabled]="showSpinner()"
-    aria-label="Example icon button with a clear icon">
-      <mat-icon>clear</mat-icon>
-    </button>
-  }
-
+    [attr.aria-label]="'Clear prompt'"
+    [attr.aria-pressed]="hide()">
+    <mat-icon>clear</mat-icon>
+</button>
+</mat-form-field>
 </div>
 @for (message of messages(); track message.id) {
   <pre
@@ -65,19 +67,6 @@
     >{{ message.text }}</pre>
 }
 </form>
-<!-- <form #form="ngForm" (ngSubmit)="sendMessage(form, form.value.message)">
-  <input
-    name="message"
-    placeholder="Type a message"
-    ngModel
-    required
-    autofocus
-    [disabled]="generatingInProgress()"
-  />
-  <button type="submit" [disabled]="generatingInProgress() || form.invalid">
-    Send
-  </button>
-</form> -->
 
 <app-error-result [errorMessage]="error"></app-error-result>
 <app-search-result [chatHistory]="chatHistory()"></app-search-result>
