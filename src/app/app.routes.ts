@@ -9,7 +9,7 @@ import { HomeComponent } from './home/home.component';
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'Prompt', pathMatch: 'full' },
   { path: 'home',title: 'Home', component: HomeComponent },
   { path: 'prompt',title: 'Prompt' , loadComponent: () => import('./prompt-input/prompt-input.component').then(c => c.PromptInputComponent),
     // canActivate: [authGuard],
@@ -21,5 +21,5 @@ export const routes: Routes = [
  },
  { path: 'not-found', loadComponent: () => import('./page-not-found/page-not-found.component').then(c => c.PageNotFoundComponent)  , data: {message: 'Page not found!'} },
  { path: 'login', component: LoginComponent },
- { path: 'register', component: RegisterComponent, pathMatch: 'full' }
+ { path: 'register', component: RegisterComponent }
 ];

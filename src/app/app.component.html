@@ -1,25 +1,2 @@
-<!-- <div class="container"> -->
-  <!-- <ng-container class="app">
-     <app-prompt-input
-     [errorMessage]="error"
-     (errorMessageEvent)="getErrorMessage($event)"
-      (showSpinnerEvent)="setSpinnerStatus($event)"
-      (chatHistoryEvent)="setChatHistory($event)"
-      ></app-prompt-input>
-      @if(showSpinner()) {
-        <app-loading-spinner></app-loading-spinner>
-        }
-      @defer () {
-     <app-image-upload></app-image-upload>
-       }
-     <app-error-result [errorMessage]="error"></app-error-result>
-     <app-search-result [chatHistory]="chatHistory"></app-search-result>
-     @defer () {
-       <app-payment></app-payment>
-       <app-login></app-login>
-     }
-  </ng-container> -->
-  <!-- <ng-container class="app"> -->
-  <!-- </ng-container> -->
-  <!-- </div> -->
-  <router-outlet></router-outlet>
+<app-toolbar></app-toolbar>
+<router-outlet></router-outlet>

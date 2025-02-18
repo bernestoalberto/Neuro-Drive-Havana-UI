@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AuthService } from '../auth.service';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AuthResponseData } from '../auth.const';
 import { NgForm } from '@angular/forms';
@@ -12,7 +12,7 @@ import { LoadingSpinnerComponent } from "../../shared/loading-spinner/loading-sp
     selector: 'app-register',
 
     templateUrl: './register.component.html',
-    styleUrl: './register.component.sass',
+    styleUrl: './register.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [LoadingSpinnerComponent, FormsModule, ReactiveFormsModule]
 })

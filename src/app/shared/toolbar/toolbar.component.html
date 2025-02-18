@@ -1,13 +1,46 @@
-<mat-toolbar>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <span>Gen AI</span>
-  <span class="example-spacer"></span>
-  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-    <mat-icon>favorite</mat-icon>
-  </button>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-    <mat-icon>share</mat-icon>
-  </button>
-</mat-toolbar>
+<div class="container">
+  <mat-toolbar>
+    <button
+      (click)="router.navigateByUrl('/home')"
+      mat-icon-button class="example-icon"
+      aria-label="Example icon-button with menu icon"
+    >
+      <mat-icon>home</mat-icon>
+    </button>
+
+    <button mat-flat-button class="btn-menu" (click)="router.navigateByUrl('/prompt')">Text to Text </button>
+
+
+  <button class="btn-menu" mat-flat-button [matMenuTriggerFor]="belowMenu">Text to Image </button>
+  <mat-menu #belowMenu="matMenu" yPosition="below">
+    <button mat-menu-item>Text to Image</button>
+    <button mat-menu-item>Image to Text</button>
+  </mat-menu>
+
+
+  <button class="btn-menu" mat-flat-button [matMenuTriggerFor]="beforeMenu">Payments</button>
+  <mat-menu #beforeMenu="matMenu" xPosition="before">
+    <button mat-menu-item>Paypal</button>
+    <button mat-menu-item>Google Pay</button>
+  </mat-menu>
+    <span class="example-spacer"></span>
+    <!-- <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+      <mat-icon>login</mat-icon>
+    </button> -->
+    <button mat-icon-button class="example-icon"
+    [matMenuTriggerFor]="afterMenu"
+    aria-label="icon-button with person icon">
+      <mat-icon>person</mat-icon>
+    </button>
+    <mat-menu #afterMenu="matMenu" xPosition="after">
+      <button mat-menu-item
+      (click)="router.navigateByUrl('/login')"
+      >Sign in</button>
+      <button mat-menu-item
+      (click)="router.navigateByUrl('/register')"
+      >Sign up</button>
+    </mat-menu>
+  </mat-toolbar>
+</div>
+
+
