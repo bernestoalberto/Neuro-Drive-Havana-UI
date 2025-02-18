@@ -59,12 +59,12 @@ export class AuthService {
     const url = `identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseConfig.apiKey}`;
     return this.http.post<AuthResponseData>(url, {email, password, returnSecureToken: true}).pipe(
       catchError(this.handleError),
-      tap(resData :User => {
+      tap((resData) => {
         this.handleAuthentication(
           resData.email,
           resData.localId,
           resData.idToken,
-          +resData.expiresIn
+          resData.expiresIn
         );
       })
     );
@@ -140,7 +140,9 @@ export class AuthService {
     email: string,
     userId: string,
     token: string,
-    expiresIn: number
+    expiresIn: number,
+    displayName: string,
+    photoUrl: string,
   ) {
     const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
     const user = new User(email, userId, token, expirationDate);
@@ -227,8 +229,8 @@ export class AuthService {
           window.alert(error);
         });
     }
-  
-  
+
+
   // Sign in with Google
   GoogleAuth() {
     return this.AuthLogin(new GoogleAuthProvider()).then((res: any) => {
@@ -258,7 +260,7 @@ export class AuthService {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
-        photoURL: user.photoURL,
+        photoUrl: user.photoURL,
         emailVerified: user.emailVerified,
       };
       return userRef.set(userData, {

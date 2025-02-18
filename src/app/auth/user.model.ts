@@ -2,19 +2,19 @@ export interface IUser {
       uid: string;
       email: string;
       displayName: string;
-      photoURL: string;
       emailVerified: boolean;
-      photoUrl: string;
-      _tokenExpirationDate: Date;
+      photoUrl?: string;
+      _tokenExpirationDate?: Date;
    }
 export class User implements IUser{
   constructor(
     public email: string,
     public uid: string,
     private _token: string,
-    private displayName: string,
-    private photoUrl: string,
-    private _tokenExpirationDate: Date
+    public displayName: string,
+    public photoUrl: string,
+    public _tokenExpirationDate: Date,
+    public emailVerified: boolean
   ) {}
 
   get token() {
