@@ -55,7 +55,7 @@ export class LoginComponent {
 
     this.isLoading = true;
 
-    authObs$ = this._service.login(email, password);
+    authObs$ = this._service.SignIn(email, password);
 
 
     authObs$.subscribe(
