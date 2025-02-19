@@ -4,19 +4,24 @@ import { MatIconModule } from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import {MatMenuModule} from '@angular/material/menu';
-import { CommonModule } from '@angular/common';
+import {MatBadgeModule} from '@angular/material/badge';
 import { Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-toolbar',
 
-  imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, CommonModule, MatDividerModule],
+  imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, MatDividerModule, MatBadgeModule],
   templateUrl: './toolbar.component.html',
   styleUrl: './toolbar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolbarComponent {
   router = inject(Router);
+  auth = inject(Auth);
+  userNotifications = 2;
+  authService = inject(AuthService);
   homeMenuOptions =[ {
     id: 1,
     matMenuTriggerFor: "aboveMenu",

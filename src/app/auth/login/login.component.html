@@ -11,12 +11,12 @@
       <p>{{ error }}</p>
     </div>
      }
-    @if ( isLoading) {
+    @if ( shouldSpinnerRun) {
     <div style="text-align: center;">
       <app-loading-spinner></app-loading-spinner>
   </div>
     }
-    @if(!isLoading){
+    @if(!shouldSpinnerRun){
       <div class="example-container">
       <form [formGroup]="form">
         <mat-form-field>
@@ -33,7 +33,7 @@
       </mat-form-field>
         <mat-form-field>
         <mat-label>Password</mat-label>
-        <input matInput [type]="hide() ? 'password' : 'text'" [formControlName]="passwordControl" />
+        <input matInput autocomplete [type]="hide() ? 'password' : 'text'" [formControlName]="passwordControl" />
         <button
         mat-icon-button
         matSuffix
@@ -45,20 +45,30 @@
       </button>
 
       </mat-form-field>
+      <button
+      (click)="router.navigateByUrl('/reset-password')"
+      class="btn btn-primary"
+      type="submit">
+      Forgot Password
+  </button>
     </form>
     </div>
   }
-
   </div>
 </div>
   </mat-card-content>
   <mat-card-actions>
     <button
-       (click)="onLogin()"
-          class="btn btn-primary"
-          type="submit"
-        >
-        Log in
-        </button>
+        (click)="login()"
+        class="btn btn-primary"
+        type="submit">
+      Log in
+    </button>
+    <button
+      (click)="loginGoogle()"
+      class="btn btn-primary">
+      Log in with Google
+    </button>
   </mat-card-actions>
 </mat-card>
+

@@ -1,12 +1,12 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { PaymentService } from './payment.service';
-import { CommonModule } from '@angular/common';
+
 import { TRANSACTION } from './constants';
 
 @Component({
   selector: 'app-payment',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.sass',
   preserveWhitespaces: true

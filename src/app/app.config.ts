@@ -6,7 +6,7 @@ import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideServiceWorker } from '@angular/service-worker';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { getAuth, provideAuth } from '@angular/fire/auth';
+import { browserPopupRedirectResolver, browserSessionPersistence, getAuth, initializeAuth, provideAuth } from '@angular/fire/auth';
 import { getAnalytics, provideAnalytics } from '@angular/fire/analytics';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
@@ -18,6 +18,12 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { logginInterceptor, cachingInterceptor, authInterceptor } from './interceptors/interceptors';
 export const CACHING_ENABLED = new HttpContextToken<boolean>(() => true);
 
+const fbApp = () => initializeApp(environment.firebaseConfig);
+const authApp = () => initializeAuth(fbApp(), {
+  persistence: browserSessionPersistence,
+  popupRedirectResolver: browserPopupRedirectResolver
+});
+const firebaseProviders = [  provideFirebaseApp(fbApp),  provideAuth(authApp),];
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -38,8 +44,10 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
-    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-    provideAuth(() => getAuth()),
+    // provideFirebaseApp(
+    //   () => initializeApp(environment.firebaseConfig)),
+    // provideAuth(() => getAuth()),
+    firebaseProviders,
     provideAnalytics(() => getAnalytics()),
     provideFirestore(() => getFirestore()),
     provideDatabase(() => getDatabase()),

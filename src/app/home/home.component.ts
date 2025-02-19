@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -9,7 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-home',
-  imports: [MatMenuModule, MatButtonModule, CommonModule, MatIconModule, MatDividerModule, MatToolbarModule],
+  imports: [MatMenuModule, MatButtonModule, MatIconModule, MatDividerModule, MatToolbarModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

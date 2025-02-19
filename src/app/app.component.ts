@@ -4,12 +4,12 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppService, Post } from './app.service';
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
 
-import { CommonModule } from '@angular/common';
+
 import { ToolbarComponent } from "./shared/toolbar/toolbar.component";
 @Component({
   selector: 'app-root',
   encapsulation: ViewEncapsulation.Emulated,
-  imports: [RouterOutlet, CommonModule, ToolbarComponent],
+  imports: [RouterOutlet, ToolbarComponent],
   providers: [
     AppService,
     {provide: HTTP_INTERCEPTORS, multi: true , useClass: AuthInterceptorService}
