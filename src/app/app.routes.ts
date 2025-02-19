@@ -1,30 +1,37 @@
 import { Routes } from '@angular/router';
 import { RegisterComponent } from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
-import { PromptInputComponent } from './prompt-input/prompt-input.component';
 import { authGuard } from './auth/auth.guard';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { promptResolver } from './prompt-input/prompt.resolver';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+
+import { HomeComponent } from './home/home.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
+// import { UserProfileComponent } from './user-profile/user-profile.component';
 
 
 export const routes: Routes = [
-  // { path: '', redirectTo: 'home', pathMatch: 'full' },
-  // { path: 'home', component: HomeComponent },
-  // { path: 'about', component: AboutComponent },
-  // { path: 'contact', component: ContactComponent },
-  // { path: 'products', component: ProductsComponent },
-  // { path: 'product/:id', component: ProductComponent },
-  // { path: 'cart', component: CartComponent },
-  // { path: 'checkout', component: CheckoutComponent },
-  // {path: 'query', component: PromptInputComponent,
-  //  canActivate: [authGuard],
-  //  children: [
-  // {path: 'image-generation', component: ImageUploadComponent,
-  //       resolve:[promptResolver]
-  // }
-  // ]},
-  // { path: 'not-found', component: PageNotFoundComponent  , data: {message: 'Page not found!'} },
-  { path: 'login', component: LoginComponent },
-  // { path: 'register', component: RegisterComponent, pathMatch: 'full' }
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  {
+    path: 'home',
+    component: HomeComponent
+
+  },
+  { path: 'prompt',title: 'Prompt' , loadComponent: () => import('./prompt-input/prompt-input.component').then(c => c.PromptInputComponent),
+    canActivate: [authGuard],
+    children: [
+      {path: 'image-generation', component: ImageUploadComponent,
+            resolve:[promptResolver]
+      }],
+ },
+ { path: 'not-found', loadComponent: () => import('./page-not-found/page-not-found.component').then(c => c.PageNotFoundComponent)  , data: {message: 'Page not found!'} },
+ { path: 'login', component: LoginComponent },
+ {
+   path: 'register',
+   loadComponent:() => import('./auth/register/register.component').then(c => c.RegisterComponent)
+  },
+ { path: 'reset-password', component: ResetPasswordComponent },
+ { path: 'user-profile',
+  loadComponent:() => import('./user-profile/user-profile.component').then(c => c.UserProfileComponent),
+  canActivate: [authGuard] }
 ];

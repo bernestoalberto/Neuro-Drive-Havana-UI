@@ -22,7 +22,6 @@ export class DataStorageService {
         recipes
       )
       .subscribe(response => {
-        console.log(response);
       });
   }
 

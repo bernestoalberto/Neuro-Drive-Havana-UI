@@ -1,107 +1,67 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, NgZone } from '@angular/core';
 import { environment } from '../../environments/environment';
-// import {
-  // doc,
-  //  Firestore,
-  // setDoc
-// //  } from '@angular/fire/firestore';
+
 import {
   Auth,
-  authState,
-  // GoogleAuthProvider,
-  // createUserWithEmailAndPassword,
-  // signInWithEmailAndPassword,
-  idToken,
-  // signInWithPopup,
-  user,
-  UserCredential
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
 } from '@angular/fire/auth';
-import { AuthResponseData } from './auth.const';
+
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, defer, Observable, tap, throwError } from 'rxjs';
 import { User } from './user.model';
 import { Router } from '@angular/router';
+import { Firestore } from '@angular/fire/firestore';
+
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  user = new BehaviorSubject<User| null>(null);
+  user$ = new BehaviorSubject<User| null>(null);
   private tokenExpirationTimer: any;
-
-  // private _firestore = inject(Firestore);
-  private _auth = inject(Auth);
-  authState$ = authState(this._auth);
-  user$ = user(this._auth);
-  idToken$ = idToken(this._auth);
-
+  userData: User | null = null;
+  public _auth = inject(Auth);
+  public fireStore = inject(Firestore);
+  public ngZone = inject(NgZone);
 
   constructor(private http: HttpClient,private router: Router) {}
-
-
-  // byGoogle() {
-  //   // you can simply change the Google for another provider here
-  //   return signInWithPopup(this._auth, new GoogleAuthProvider()).then(
-  //     (auth) => this._setUserData(auth)
-  //   );
-  // }
-
-  signup(email: string, password: string): Observable<AuthResponseData> {
-    const url = `identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey}`;
-    return this.http.post<AuthResponseData>(url, {email, password, returnSecureToken: true}).pipe(
-      catchError(this.handleError),
-      tap(resData => {
-        this.handleAuthentication(
-          resData.email,
-          resData.localId,
-          resData.idToken,
-          +resData.expiresIn
-        );
-      })
-    );
+  Login(email: string, password: string): Observable<any> {
+    const res = () => signInWithEmailAndPassword(this._auth, email, password);
+    // build up a cold observable
+    return defer(res);
   }
-  login(email: string, password: string) {
-    return this.http
-      .post<AuthResponseData>(
-        `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${environment.firebaseAPIKey}`,
-        {
-          email: email,
-          password: password,
-          returnSecureToken: true
-        }
-      )
-      .pipe(
-        catchError(this.handleError),
-        tap(resData => {
-          this.handleAuthentication(
-            resData.email,
-            resData.localId,
-            resData.idToken,
-            +resData.expiresIn
-          );
-        })
-      );
+  Signup(email: string, password: string, custom?: any): Observable<any> {
+    const res = () => createUserWithEmailAndPassword(this._auth, email, password);
+    // it also accepts an extra attributes, we will handle later
+    return defer(res)
+  }
+  LoginGoogle(): Observable<any> {
+    const provider = new GoogleAuthProvider();
+    const res = () => signInWithPopup(this._auth, provider);
+    return defer(res);
   }
 
   autoLogin() {
     const data = localStorage.getItem('userData');
-    const userData: {
-      email: string;
-      id: string;
-      _token: string;
-      _tokenExpirationDate: string;
-    } = JSON.parse(data || '');
+    const userData: User = JSON.parse(data || '');
     if (!userData) {
       return;
     }
 
     const loadedUser = new User(
+      userData.uid,
       userData.email,
-      userData.id,
+      '',
       userData._token,
-      new Date(userData._tokenExpirationDate)
+      '',
+      new Date(userData._tokenExpirationDate).getTime(),
+      userData.emailVerified
     );
 
     if (loadedUser.token) {
-      this.user.next(loadedUser);
+      this.user$.next(loadedUser);
       const expirationDuration =
         new Date(userData._tokenExpirationDate).getTime() -
         new Date().getTime();
@@ -109,36 +69,43 @@ export class AuthService {
     }
   }
 
-  logout() {
-    this.user.next(null);
-    this.router.navigate(['/auth']);
-    localStorage.removeItem('userData');
-    if (this.tokenExpirationTimer) {
-      clearTimeout(this.tokenExpirationTimer);
-    }
-    this.tokenExpirationTimer = null;
+  async logout() {
+    await this._auth.signOut();
+
+    localStorage.removeItem('user');
+      localStorage.removeItem('userData');
+      this.user$.next(null);
+      if (this.tokenExpirationTimer) {
+        clearTimeout(this.tokenExpirationTimer);
+      }
+      this.tokenExpirationTimer = null;
+      this.router.navigateByUrl('/login');
+
   }
 
   autoLogout(expirationDuration: number) {
     this.tokenExpirationTimer = setTimeout(() => {
+      debugger;
       this.logout();
     }, expirationDuration);
   }
 
-  private handleAuthentication(
+  handleAuthentication(
     email: string,
     userId: string,
     token: string,
-    expiresIn: number
+    expiresIn: number,
+    photoUrl: string,
   ) {
-    const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
-    const user = new User(email, userId, token, expirationDate);
-    this.user.next(user);
+    const expirationDate = new Date(new Date().getTime() + expiresIn * 1000).getTime();
+    const user = new User(email, userId, token, photoUrl, '', expirationDate, true);
+    this.user$.next(user);
     this.autoLogout(expiresIn * 1000);
     localStorage.setItem('userData', JSON.stringify(user));
   }
 
-  private handleError(errorRes: HttpErrorResponse) {
+
+  handleError(errorRes: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred!';
     if (!errorRes.error || !errorRes.error.error) {
       return throwError(() => new Error(errorMessage));
@@ -156,38 +123,26 @@ export class AuthService {
     }
     return throwError(() => new Error(errorMessage));
   }
-  // signUpFireBaseApi(email: string, password: string){
-  //       return createUserWithEmailAndPassword(
-  //     this._auth,
-  //     email.trim(),
-  //     password.trim()
-  //   ).then((auth) => this._setUserData(auth));
-  // }
-  // loginFireBaseApi(email: string, password: string): Promise<User> {
-  //   return signInWithEmailAndPassword(
-  //       this._auth,
-  //       email.trim(),
-  //       password.trim()
-  //     ).then((auth: UserCredential) => this._setUserData(auth));
-  //   }
 
-  // private _setUserData(auth: UserCredential): Promise<User> {
-  //   const user: IUser = {
-  //     id: auth.user.uid,
-  //     name: (auth.user.displayName || auth.user.email)!,
-  //     email: auth.user.email!,
-  //     emailVerified: auth.user.emailVerified,
-  //     platformId: auth.user.providerId,
-  //     lang: 'en',
-  //     avatar: auth.user.photoURL || 'https://via.placeholder.com/150',
-  //   }
-  //     // custom ones
-  //   //   lastRoute: string,
-  //   //   configId: string,
-  //   // };
-  //   const userDocRef = doc(this._firestore, `users/${user.id}`);
-  //   return setDoc(userDocRef, user).then(() => user);
+
+  // getOpenAIAuthToken(): string{
+  //   return environment.OPENAI_API_KEY;
   // }
+    // Returns true when user is looged in and email is verified
+  get isLoggedIn(): boolean {
+    return  this._auth.currentUser !== null;
+  }
+
+    // Reset Forggot password
+    ForgotPassword(passwordResetEmail: string) {
+      return sendPasswordResetEmail(this._auth, passwordResetEmail)
+        .then(() => {
+          window.alert('Password reset email sent, check your inbox.');
+        })
+        .catch((error: any) => {
+          window.alert(error);
+        });
+    }
 }
 
 

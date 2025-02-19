@@ -1,15 +1,26 @@
-export class User {
+export interface IUser {
+      uid: string;
+      email: string;
+      displayName: string;
+     _token: string;
+      emailVerified: boolean;
+      photoUrl?: string;
+      _tokenExpirationDate?: number;
+   }
+export class User implements IUser {
   constructor(
     public email: string,
-    public id: string,
-    private _token: string,
-    private _tokenExpirationDate: Date
+    public uid: string,
+    public _token: string,
+    public displayName: string,
+    public photoUrl: string,
+    public _tokenExpirationDate: number,
+    public emailVerified: boolean
   ) {}
 
   get token() {
-    if (!this._tokenExpirationDate || new Date() > this._tokenExpirationDate) {
-      return null;
-    }
     return this._token;
   }
 }
+
+

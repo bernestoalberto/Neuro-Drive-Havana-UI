@@ -1,48 +1,40 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { PromptInputComponent } from './prompt-input/prompt-input.component';
-import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
-import { ErrorResultComponent } from './error-result/error-result.component';
-import { ImageUploadComponent } from './image-upload/image-upload.component';
-import { SearchResultComponent } from './search-result/search-result.component';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { Component, HostListener, inject, signal, Signal, ViewEncapsulation, WritableSignal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppService, Post } from './app.service';
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
-import { CommonModule } from '@angular/common';
-import { LoginComponent } from './auth/login/login.component';
+
+
+import { ToolbarComponent } from "./shared/toolbar/toolbar.component";
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet, PromptInputComponent, LoadingSpinnerComponent, ErrorResultComponent, ImageUploadComponent, SearchResultComponent, HttpClientModule, RouterLink, RouterLinkActive, LoginComponent],
+  encapsulation: ViewEncapsulation.Emulated,
+  imports: [RouterOutlet, ToolbarComponent],
   providers: [
     AppService,
     {provide: HTTP_INTERCEPTORS, multi: true , useClass: AuthInterceptorService}
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.sass',
+  styleUrl: './app.component.scss',
+
 })
 export class AppComponent {
-  title = 'bonet-gen-ai';
-  chatHistory: any[] = [];
-  loadedPost: Post[] = [];
-  showSpinner: Boolean = false;
-  error = '';
-  // appService = Inject(AppService);
-  constructor(private appService: AppService) { }
-  ngOnInit(): void {
-    // this.appService.onCreateFirebasePost({ title :'Harry Potter', content:'The philosopher stone'  });
-    this.fetchPostData();
 
+  @HostListener('document:copy', ['$event'])
+  onDocumentCopy(event: ClipboardEvent) {
+    event.preventDefault();
   }
-  getErrorMessage(event: any){
-    this.error = event;
-  }
+  title = 'bonet-gen-ai';
+  loadedPost: Post[] = [];
+  error = '';
+  showSpinner: WritableSignal<boolean> = signal(false);
+  private  appService = inject(AppService);
+  ngOnInit(): void {  }
+
   setSpinnerStatus(event : any){
-    this.showSpinner = event.status;
+    this.showSpinner.set(event.status);
   }
-  setChatHistory(event : any){
-    this.chatHistory = event;
-  }
+
   private fetchPostData(){
     this.appService.onFetchFirebasePost()
     .subscribe(posts => {

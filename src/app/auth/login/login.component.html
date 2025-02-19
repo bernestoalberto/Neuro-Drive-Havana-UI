@@ -1,52 +1,74 @@
-<div class="row">
+<mat-card class="example-card" appearance="outlined">
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title>Sign in</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+ <div class="row">
   <div class="col-xs-12 col-md-6 col-md-offset-3">
   @if(error){
     <div class="alert alert-danger">
       <p>{{ error }}</p>
     </div>
      }
-    @if ( isLoading) {
+    @if ( shouldSpinnerRun) {
     <div style="text-align: center;">
       <app-loading-spinner></app-loading-spinner>
   </div>
     }
-    @if(!isLoading){
-    <form #authForm="ngForm" (ngSubmit)="onLogin(authForm)">
-      <div class="form-group">
-        <label for="email">E-Mail</label>
-        <input
-          type="email"
-          id="email"
-          class="form-control"
-          ngModel
-          name="email"
-          required
-          email
-        />
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          class="form-control"
-          ngModel
-          name="password"
-          required
-          minlength="6"
-        />
-      </div>
-      <div>
+    @if(!shouldSpinnerRun){
+      <div class="example-container">
+      <form [formGroup]="form">
+        <mat-form-field>
+        <mat-label>E-Mail</mat-label>
+        <input type="email" matInput [formControlName]="emailControl" [errorStateMatcher]="matcher"
+        placeholder="Ex. pat@example.com">
+        <mat-hint>Errors appear instantly!</mat-hint>
+        @if (form.controls.email.hasError('email') && !form.controls.email.hasError('required')) {
+          <mat-error>Please enter a valid email address</mat-error>
+        }
+        @if (form.controls.email.hasError('required')) {
+          <mat-error>Email is <strong>required</strong></mat-error>
+        }
+      </mat-form-field>
+        <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput autocomplete [type]="hide() ? 'password' : 'text'" [formControlName]="passwordControl" />
         <button
-          class="btn btn-primary"
-          type="submit"
-          [disabled]="!authForm.valid"
-        >
-        Log in
-        </button>
-      </div>
-    </form>
-  }
+        mat-icon-button
+        matSuffix
+        (click)="clickEvent($event)"
+        [attr.aria-label]="'Hide password'"
+        [attr.aria-pressed]="hide()"
+      >
+        <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
 
+      </mat-form-field>
+      <button
+      (click)="router.navigateByUrl('/reset-password')"
+      class="btn btn-primary"
+      type="submit">
+      Forgot Password
+  </button>
+    </form>
+    </div>
+  }
   </div>
 </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button
+        (click)="login()"
+        class="btn btn-primary"
+        type="submit">
+      Log in
+    </button>
+    <button
+      (click)="loginGoogle()"
+      class="btn btn-primary">
+      Log in with Google
+    </button>
+  </mat-card-actions>
+</mat-card>
+

@@ -1,8 +1,9 @@
-export type AI = 'GEMINI' | 'OPENAI'
+export type AI = 'Gemini' | 'Openai' | 'Deepseek';
 
 export enum AI_NAME {
-  GEMINI = 'GEMINI',
-  OPENAI = 'OPENAI',
+  GEMINI = 'Gemini',
+  OPENAI = 'Openai',
+  DEEPSEEK = 'Deepseek',
 }
 
 export interface Answer {
@@ -11,4 +12,21 @@ export interface Answer {
   ai: AI
   aiName: AI_NAME
   timestamp: number
+}
+
+
+export interface Model {
+  value: string;
+  viewValue: string;
+}
+export interface AiProvider {
+  name: string;
+  id: string;
+}
+
+
+export interface ModelGroup {
+  disabled?: boolean;
+  name: string;
+  model: Model[];
 }

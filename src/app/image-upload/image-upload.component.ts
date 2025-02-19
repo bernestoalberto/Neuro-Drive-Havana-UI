@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AppService } from '../app.service';
 import { HttpEventType } from '@angular/common/http';
@@ -7,8 +7,8 @@ import { ThemePalette } from '@angular/material/core';
 
 @Component({
   selector: 'app-image-upload',
-  standalone: true,
-  imports: [CommonModule, MatProgressBarModule],
+
+  imports: [MatProgressBarModule],
   templateUrl: './image-upload.component.html',
   styleUrl: './image-upload.component.sass'
 })
@@ -65,7 +65,6 @@ export class ImageUploadComponent implements OnInit{
         // event.total);
         50);
       } else if (event.type === HttpEventType.Response) {
-        console.log('Image uploaded successfully!');
         // Handle successful upload response here
       }
     });

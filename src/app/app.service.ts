@@ -2,6 +2,9 @@ import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType, HttpHe
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, Subject, filter, map, startWith } from 'rxjs';
 import { AI, AI_NAME } from './prompt-input/helper';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+
+
 
 
 type ModelAnswer = {
@@ -19,7 +22,7 @@ export interface Post {
   content: string;
 }
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AppService {
 
@@ -28,7 +31,10 @@ export class AppService {
   private readonly _completeMessages = signal<Message[]>([]);
   private readonly _messages = signal<Message[]>([]);
   private readonly _generatingInProgress = signal<boolean>(false);
-
+  private _snackBar = inject(MatSnackBar);
+    horizontalPosition: MatSnackBarHorizontalPosition = 'start';
+    verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+    durationInSeconds = 5;
   readonly messages = this._messages.asReadonly();
   readonly generatingInProgress = this._generatingInProgress.asReadonly();
 
@@ -97,19 +103,26 @@ export class AppService {
       );
   }
 
-  getResponse(history: any[], message: string, typeOfAI : AI): Observable<any> {
+  getResponse(history: any[], message: string, typeOfAI : string = AI_NAME.GEMINI, model: string = 'gemini-1.5-flash'): Observable<any> {
     const options = {
       headers : {
         'Content-Type': 'application/json'
       },
      };
-     const body = {
-      history,
-      message
-    };
+     const body = JSON.stringify({
+      query: {
+       history,
+      message,
+      model
+      }
+    });
     let url =`http://${window.location.hostname}:8000/gemini`;
-    if(typeOfAI === AI_NAME.OPENAI){
+    if(typeOfAI.toLowerCase().includes(AI_NAME.OPENAI.toLowerCase())){
       url =`http://${window.location.hostname}:8000/openai`;
+    }
+      if(typeOfAI.toLowerCase().includes(AI_NAME.DEEPSEEK.toLowerCase())){
+      // url =`http://${window.location.hostname}:8000/search`;
+      url =`http://192.168.137.2:8000/search`;
     }
 
     return this.http.post(url, body, options);
@@ -127,7 +140,6 @@ export class AppService {
   onCreateFirebasePost(postData : {title: string, content: string}){
     const url = 'https://appconex-d8cb0-default-rtdb.firebaseio.com/posts.json';
     this.http.post<{name: string}>(url, postData).subscribe(responseData => {
-      console.log(responseData);
     });
   }
   onFetchFirebasePost(): Observable<Post[]>{
@@ -153,6 +165,13 @@ export class AppService {
   }
   fetchAnswers(){
    return [{prompt: '', answer: '' }];
+  }
+  openSnackBar(text : string= 'Please enter a question', action: string = 'error', duration: number = 5) {
+    this._snackBar.open(text, action ?? 'close', {
+      horizontalPosition: this.horizontalPosition,
+      verticalPosition: this.verticalPosition,
+      duration: duration ?? this.durationInSeconds * 1000
+    });
   }
 
 }

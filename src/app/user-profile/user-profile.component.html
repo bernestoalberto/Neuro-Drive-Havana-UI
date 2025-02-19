@@ -1,0 +1,40 @@
+<div class="profile-container">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <div mat-card-avatar class="profile-avatar">
+        @if (user?.photoURL) {
+          <img [src]="user?.photoURL" alt="User Avatar">
+        } @else {
+          <mat-icon class="default-icon">account_circle</mat-icon>
+        }
+      </div>
+      <mat-card-title>{{ user?.displayName || 'User Name' }}</mat-card-title>
+      <mat-card-subtitle>{{ user?.email }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item>
+          <mat-icon matListIcon>phone</mat-icon>
+          <span>{{ user?.phoneNumber || 'No phone number' }}</span>
+        </mat-list-item>
+
+        <!-- <mat-list-item>
+          <mat-icon matListIcon>location_on</mat-icon>
+          <span>{{ user?.location || 'Location not set' }}</span>
+        </mat-list-item> -->
+        @if(user?.metadata){
+        <mat-list-item>
+          <mat-icon matListIcon>event</mat-icon>
+          <span>Joined: {{ (user?.metadata)?.creationTime | date:'longDate' }}</span>
+        </mat-list-item>
+      }
+      </mat-list>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-flat-button color="primary" (click)="editProfile()">Edit Profile</button>
+      <button mat-flat-button color="warn" (click)="logout()">Logout</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

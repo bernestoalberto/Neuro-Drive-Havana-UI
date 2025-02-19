@@ -1,0 +1,10 @@
+<!-- src/app/shared/reserved-word-input/reserved-word-input.component.html -->
+<mat-form-field>
+  <mat-label>{{ label }}</mat-label>
+  <input matInput [formControl]="control" [placeholder]="placeholder">
+  @if (control.hasError('reservedWords')) {
+    <mat-error>
+      This input contains reserved words.
+    </mat-error>
+  }
+</mat-form-field>
