@@ -125,9 +125,9 @@ export class AuthService {
   }
 
 
-  getOpenAIAuthToken(): string{
-    return environment.OPENAI_API_KEY;
-  }
+  // getOpenAIAuthToken(): string{
+  //   return environment.OPENAI_API_KEY;
+  // }
     // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
     return  this._auth.currentUser !== null;
