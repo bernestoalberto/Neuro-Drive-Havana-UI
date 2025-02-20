@@ -1,9 +1,10 @@
-export type AI = 'Gemini' | 'Openai' | 'Deepseek';
+export type AI = 'Gemini' | 'Openai' | 'Deepseek' | 'Llama';
 
 export enum AI_NAME {
   GEMINI = 'Gemini',
   OPENAI = 'Openai',
   DEEPSEEK = 'Deepseek',
+  LLAMA = 'Llama',
 }
 
 export interface Answer {
