@@ -65,16 +65,12 @@ export class PromptInputComponent implements OnInit {
           viewValue: `${AI_NAME.GEMINI} 2.0 Flash`
       },
       {
-          value: 'gemini-1.5',
-          viewValue: `${AI_NAME.GEMINI} 1.5 pro`
-      },
-      {
         value: 'gemini-1.5-flash',
         viewValue: `${AI_NAME.GEMINI} 1.5 flash`
       },
       ],
     };
-    openAIModelGroup: ModelGroup =
+  openAIModelGroup: ModelGroup =
 
     {
       name: AI_NAME.OPENAI ,
@@ -85,14 +81,22 @@ export class PromptInputComponent implements OnInit {
         {value: 'gpt-4o-mini', viewValue: 'GPT 4o Mini'},
       ],
     };
-    deepSeekModelGroup: ModelGroup =
+  deepSeekModelGroup: ModelGroup =
     {
       name: AI_NAME.DEEPSEEK,
       disabled: false,
       model: [
         {value: 'deepseek-r1:1.5b', viewValue: `${AI_NAME.DEEPSEEK} R1:1.5b`}
       ],
-    }
+  }
+  llamaModelGroup: ModelGroup =
+    {
+      name: AI_NAME.LLAMA,
+      disabled: false,
+      model: [
+        {value: 'llama-3.2-3b-instruct', viewValue: `Llama-3.2`}
+      ],
+  }
   currentodel: ModelGroup[] = [];
   aiProviders: AiProvider[] = [
     {
@@ -106,6 +110,10 @@ export class PromptInputComponent implements OnInit {
     {
       name: AI_NAME.DEEPSEEK,
       id:AI_NAME.DEEPSEEK.toLowerCase()
+    },
+    {
+      name: AI_NAME.LLAMA,
+      id:AI_NAME.LLAMA.toLowerCase()
     }
   ];
 
@@ -134,6 +142,8 @@ export class PromptInputComponent implements OnInit {
         group = this.openAIModelGroup;
       } else if(value === AI_NAME.DEEPSEEK) {
         group = this.deepSeekModelGroup;
+      } else if(value === AI_NAME.LLAMA) {
+        group = this.llamaModelGroup;
       }
       this.currentodel = [...[], group];
     });

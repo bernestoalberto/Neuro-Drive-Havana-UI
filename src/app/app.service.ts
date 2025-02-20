@@ -3,6 +3,8 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Observable, Subject, filter, map, startWith } from 'rxjs';
 import { AI, AI_NAME } from './prompt-input/helper';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { Auth } from '@angular/fire/auth';
+import { OSType } from './const';
 
 
 
@@ -24,9 +26,11 @@ export interface Post {
 @Injectable({
   providedIn: 'root',
 })
+
 export class AppService {
 
   private readonly http = inject(HttpClient);
+  private auth = inject(Auth);
   error = new Subject<string>();
   private readonly _completeMessages = signal<Message[]>([]);
   private readonly _messages = signal<Message[]>([]);
@@ -109,7 +113,9 @@ export class AppService {
         'Content-Type': 'application/json'
       },
      };
+     const token = this.auth.currentUser?.getIdToken();
      const body = JSON.stringify({
+      idToken: token,
       query: {
        history,
       message,
@@ -120,12 +126,29 @@ export class AppService {
     if(typeOfAI.toLowerCase().includes(AI_NAME.OPENAI.toLowerCase())){
       url =`http://${window.location.hostname}:8000/openai`;
     }
+    if(typeOfAI.toLowerCase().includes(AI_NAME.LLAMA.toLowerCase())){
+      url =`http://${window.location.hostname}:8000/llama`;
+    }
       if(typeOfAI.toLowerCase().includes(AI_NAME.DEEPSEEK.toLowerCase())){
-      // url =`http://${window.location.hostname}:8000/search`;
-      url =`http://192.168.137.2:8000/search`;
+      url = this.getOS().includes(OSType.Windows)
+       ? `http://192.168.137.2:8000/search`
+       : `http://${window.location.hostname}:8000/search`;
     }
 
     return this.http.post(url, body, options);
+  }
+  getOS(): string {
+    if ((navigator as any).userAgentData?.platform) {
+      return (navigator as any).userAgentData.platform;
+    } else {
+      const userAgent = navigator.userAgent;
+      if (userAgent.indexOf(OSType.Windows) !== -1) return OSType.Windows;
+      if (userAgent.indexOf(OSType.MacOS) !== -1) return OSType.MacOS;
+      if (userAgent.indexOf(OSType.Linux) !== -1) return OSType.Linux;
+      if (userAgent.indexOf(OSType.Android) !== -1) return OSType.Android;
+      if (userAgent.indexOf(OSType.iOS) !== -1) return OSType.iOS;
+      return OSType.Unknown;
+    }
   }
 
   uploadImage(formData: FormData): Observable<any>{

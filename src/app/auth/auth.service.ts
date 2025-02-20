@@ -1,5 +1,4 @@
 import { inject, Injectable, NgZone } from '@angular/core';
-import { environment } from '../../environments/environment';
 
 import {
   Auth,
@@ -8,6 +7,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signOut,
 } from '@angular/fire/auth';
 
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -71,6 +71,7 @@ export class AuthService {
 
   async logout() {
     await this._auth.signOut();
+    await signOut(this._auth);
 
     localStorage.removeItem('user');
       localStorage.removeItem('userData');
@@ -85,7 +86,6 @@ export class AuthService {
 
   autoLogout(expirationDuration: number) {
     this.tokenExpirationTimer = setTimeout(() => {
-      debugger;
       this.logout();
     }, expirationDuration);
   }
@@ -128,13 +128,14 @@ export class AuthService {
   // getOpenAIAuthToken(): string{
   //   return environment.OPENAI_API_KEY;
   // }
+
     // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
     return  this._auth.currentUser !== null;
   }
 
     // Reset Forggot password
-    ForgotPassword(passwordResetEmail: string) {
+  ForgotPassword(passwordResetEmail: string) {
       return sendPasswordResetEmail(this._auth, passwordResetEmail)
         .then(() => {
           window.alert('Password reset email sent, check your inbox.');
