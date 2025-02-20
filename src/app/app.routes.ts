@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
-import { RegisterComponent } from './auth/register/register.component';
-import { LoginComponent } from './auth/login/login.component';
+import { AuthComponent } from './auth/auth.component';
 import { authGuard } from './auth/auth.guard';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { promptResolver } from './prompt-input/prompt.resolver';
@@ -25,7 +24,7 @@ export const routes: Routes = [
       }],
  },
  { path: 'not-found', loadComponent: () => import('./page-not-found/page-not-found.component').then(c => c.PageNotFoundComponent)  , data: {message: 'Page not found!'} },
- { path: 'login', component: LoginComponent },
+ { path: 'login', component: AuthComponent },
  {
    path: 'register',
    loadComponent:() => import('./auth/register/register.component').then(c => c.RegisterComponent)
