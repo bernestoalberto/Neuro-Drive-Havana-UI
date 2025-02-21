@@ -61,6 +61,14 @@ export class PromptInputComponent implements OnInit {
       disabled: false,
       model: [
         {
+          value: 'gemini-2.0-flash-lite-preview',
+          viewValue: `${AI_NAME.GEMINI} 2.0 Flash Lite Preview`
+      },
+       {
+          value: 'gemini-2.0-pro-expreimental',
+          viewValue: `${AI_NAME.GEMINI} 2.0 Pro Expreimental`
+      },
+       {
           value: 'gemini-2.0-flash',
           viewValue: `${AI_NAME.GEMINI} 2.0 Flash`
       },
