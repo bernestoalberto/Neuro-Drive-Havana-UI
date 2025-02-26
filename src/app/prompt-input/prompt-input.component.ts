@@ -1,35 +1,80 @@
-import { Component, inject, effect, signal, WritableSignal, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  effect,
+  signal,
+  WritableSignal,
+  OnInit,
+} from '@angular/core';
 
 import { AppService } from '../app.service';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 
-
-import {MatIconModule} from '@angular/material/icon';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import { ModelGroup, AiProvider, AI_NAME } from './helper';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ModelGroup, AiProvider, AI_NAME, Tab } from '../shared/helper';
 import { CommonModule } from '@angular/common';
-import { SearchResultComponent } from "../search-result/search-result.component";
-import { ErrorResultComponent } from "../error-result/error-result.component";
-import { LoadingSpinnerComponent } from "../shared/loading-spinner/loading-spinner.component";
-import {MatSelectModule} from '@angular/material/select';
-import {FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators} from '@angular/forms';
+import { SearchResultComponent } from './search-result/search-result.component';
+import { ErrorResultComponent } from './error-result/error-result.component';
+import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component';
+import { MatSelectModule } from '@angular/material/select';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  NgForm,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { DialogComponent } from '../shared/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import {MatGridListModule} from '@angular/material/grid-list';
-// import {MatCardModule} from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { TabGroupComponent } from '../shared/tab-group/tab-group-component';
+import { ImageUploadComponent } from "./image-upload/image-upload.component";
 
 @Component({
   selector: 'app-prompt-input',
-  imports: [FormsModule, MatButtonModule, MatIconModule, MatTooltipModule, MatProgressSpinnerModule, MatInputModule, MatFormFieldModule, CommonModule, SearchResultComponent, ErrorResultComponent, LoadingSpinnerComponent, MatSelectModule, ReactiveFormsModule, MatTooltipModule, MatGridListModule],
+  imports: [
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule,
+    MatInputModule,
+    MatFormFieldModule,
+    CommonModule,
+    SearchResultComponent,
+    ErrorResultComponent,
+    LoadingSpinnerComponent,
+    TabGroupComponent,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatTooltipModule,
+    MatGridListModule,
+    ImageUploadComponent
+],
   templateUrl: './prompt-input.component.html',
   styleUrl: './prompt-input.component.scss',
 })
 export class PromptInputComponent implements OnInit {
   prompt: string = '';
   chatHistory = signal<string[] | any>([]);
+  contents: Tab[] = [
+    { id: '1', name: ' Content 1', value: '', label: 'First', icon: 'android' },
+    {
+      id: '2',
+      name: ' Content 2',
+      value: '',
+      label: 'Second',
+      icon: 'image',
+    },
+    { id: '3', name: ' Content 3', value: '', label: 'Third', icon: 'phone' },
+  ];
+  tabs: Array<string> = ['Text to Text', 'Text to Image', 'Text to audio'];
+  index = 0;
   readonly dialog = inject(MatDialog);
   surpriseOptions = [
     'Who won the latest Novel Peace Prize?',
@@ -37,7 +82,7 @@ export class PromptInputComponent implements OnInit {
     'Where does pizza come from?',
     'Who do you make a BLT sandwich with?',
     'What is the oldest town in America?',
-    'Who wrote Hotel California?'
+    'Who wrote Hotel California?',
   ];
   error = '';
   showSpinner: WritableSignal<boolean> = signal(false);
@@ -47,82 +92,77 @@ export class PromptInputComponent implements OnInit {
   clearStatus: WritableSignal<boolean> = signal(false);
   errorMessage = '';
   form = new FormGroup({
-    model: new FormControl({value: '', disabled: false}, [Validators.required]),
+    model: new FormControl({ value: '', disabled: false }, [
+      Validators.required,
+    ]),
     aiProvider: new FormControl('', [Validators.required]),
-    prompt: new FormControl('', [Validators.required])
+    prompt: new FormControl('', [Validators.required]),
   });
   aiProviderControl = 'aiProvider';
   modelControl = 'model';
   promptControl = 'prompt';
 
-  geminiModelGroup: ModelGroup =
-    {
-      name: AI_NAME.GEMINI,
-      disabled: false,
-      model: [
-        {
-          value: 'gemini-2.0-flash-lite-preview',
-          viewValue: `${AI_NAME.GEMINI} 2.0 Flash Lite Preview`
+  geminiModelGroup: ModelGroup = {
+    name: AI_NAME.GEMINI,
+    disabled: false,
+    model: [
+      {
+        value: 'gemini-2.0-flash-lite-preview',
+        viewValue: `${AI_NAME.GEMINI} 2.0 Flash Lite Preview`,
       },
-       {
-          value: 'gemini-2.0-pro-expreimental',
-          viewValue: `${AI_NAME.GEMINI} 2.0 Pro Expreimental`
+      {
+        value: 'gemini-2.0-pro-expreimental',
+        viewValue: `${AI_NAME.GEMINI} 2.0 Pro Expreimental`,
       },
-       {
-          value: 'gemini-2.0-flash',
-          viewValue: `${AI_NAME.GEMINI} 2.0 Flash`
+      {
+        value: 'gemini-2.0-flash',
+        viewValue: `${AI_NAME.GEMINI} 2.0 Flash`,
       },
       {
         value: 'gemini-1.5-flash',
-        viewValue: `${AI_NAME.GEMINI} 1.5 flash`
+        viewValue: `${AI_NAME.GEMINI} 1.5 flash`,
       },
-      ],
-    };
-  openAIModelGroup: ModelGroup =
-
-    {
-      name: AI_NAME.OPENAI ,
-      disabled: false,
-      model: [
-        {value: 'gpt-3.5-turbo', viewValue: 'GPT 3.5 Turbo'},
-        {value: 'gpt-4o', viewValue: 'GPT 4o'},
-        {value: 'gpt-4o-mini', viewValue: 'GPT 4o Mini'},
-      ],
-    };
-  deepSeekModelGroup: ModelGroup =
-    {
-      name: AI_NAME.DEEPSEEK,
-      disabled: false,
-      model: [
-        {value: 'deepseek-r1:1.5b', viewValue: `${AI_NAME.DEEPSEEK} R1:1.5b`}
-      ],
-  }
-  llamaModelGroup: ModelGroup =
-    {
-      name: AI_NAME.LLAMA,
-      disabled: false,
-      model: [
-        {value: 'llama-3.2-3b-instruct', viewValue: `Llama-3.2`}
-      ],
-  }
+    ],
+  };
+  openAIModelGroup: ModelGroup = {
+    name: AI_NAME.OPENAI,
+    disabled: false,
+    model: [
+      { value: 'gpt-3.5-turbo', viewValue: 'GPT 3.5 Turbo' },
+      { value: 'gpt-4o', viewValue: 'GPT 4o' },
+      { value: 'gpt-4o-mini', viewValue: 'GPT 4o Mini' },
+    ],
+  };
+  deepSeekModelGroup: ModelGroup = {
+    name: AI_NAME.DEEPSEEK,
+    disabled: false,
+    model: [
+      { value: 'deepseek-r1:1.5b', viewValue: `${AI_NAME.DEEPSEEK} R1:1.5b` },
+    ],
+  };
+  llamaModelGroup: ModelGroup = {
+    name: AI_NAME.LLAMA,
+    disabled: false,
+    model: [{ value: 'llama-3.2-3b-instruct', viewValue: `Llama-3.2` }],
+  };
   currentodel: ModelGroup[] = [];
   aiProviders: AiProvider[] = [
     {
       name: AI_NAME.GEMINI,
-      id: AI_NAME.GEMINI.toLowerCase()
+      id: AI_NAME.GEMINI.toLowerCase(),
     },
     {
       name: AI_NAME.OPENAI,
-      id: AI_NAME.OPENAI.toLowerCase()
+      id: AI_NAME.OPENAI.toLowerCase(),
     },
     {
       name: AI_NAME.DEEPSEEK,
-      id:AI_NAME.DEEPSEEK.toLowerCase()
+      id: AI_NAME.DEEPSEEK.toLowerCase(),
     },
     {
       name: AI_NAME.LLAMA,
-      id:AI_NAME.LLAMA.toLowerCase()
-    }
+      id: AI_NAME.LLAMA.toLowerCase(),
+    },
   ];
 
   hide = signal(true);
@@ -131,36 +171,35 @@ export class PromptInputComponent implements OnInit {
     event.stopPropagation();
   }
 
-   ngOnInit() {
+  ngOnInit() {
     this.form.controls.model.valueChanges.subscribe((value) => {
-      if(this.form.value.aiProvider === AI_NAME.OPENAI){
-         this.dialog.open(DialogComponent, {
+      if (this.form.value.aiProvider === AI_NAME.OPENAI) {
+        this.dialog.open(DialogComponent, {
           data: {
-            title : 'Open AI model selected' ,
-            content: `This model ${value} is not free , please use it with responsability.`}
-           }
-           );
+            title: 'Open AI model selected',
+            content: `This model ${value} is not free , please use it with responsability.`,
+          },
+        });
       }
     });
     this.form.controls.aiProvider.valueChanges.subscribe((value) => {
       let group = this.geminiModelGroup;
       this.currentodel = [];
       this.setShowSpinner(false);
-      if(value === AI_NAME.OPENAI) {
+      if (value === AI_NAME.OPENAI) {
         group = this.openAIModelGroup;
-      } else if(value === AI_NAME.DEEPSEEK) {
+      } else if (value === AI_NAME.DEEPSEEK) {
         group = this.deepSeekModelGroup;
-      } else if(value === AI_NAME.LLAMA) {
+      } else if (value === AI_NAME.LLAMA) {
         group = this.llamaModelGroup;
       }
       this.currentodel = [...[], group];
     });
-   }
+  }
 
   constructor() {}
 
-
-  onFormSubmit(){
+  onFormSubmit() {
     this.form.markAllAsTouched();
     if (this.form.valid) {
       this.getResponseFromAI();
@@ -177,7 +216,7 @@ export class PromptInputComponent implements OnInit {
     this.showSpinner.set(false);
     this.chatHistory.set([]);
   }
-  sendError(error: string = ''){
+  sendError(error: string = '') {
     this.errorMessage = error;
   }
   setShowSpinner(value = true) {
@@ -188,26 +227,38 @@ export class PromptInputComponent implements OnInit {
   // }
   getResponseFromAI() {
     try {
-      const {aiProvider, prompt, model } = this.form.value;
+      const { aiProvider, prompt, model } = this.form.value;
       this.setShowSpinner();
-      this.appService.getResponse(this.chatHistory(), `${prompt}`,`${aiProvider}`, `${model}`).subscribe((data) => {
-        this.clearStatus.set(false);
-        this.chatHistory.update(history => {
-          return [...history, {
-          role: 'user',
+      this.appService
+        .getResponse(
+          this.chatHistory(),
+          `${prompt}`,
+          `${aiProvider}`,
+          `${model}`
+        )
+        .subscribe((data) => {
+          this.clearStatus.set(false);
+          this.chatHistory.update((history) => {
+            return [
+              ...history,
+              {
+                role: 'user',
 
-          parts: this.prompt
-        }
-      ]
-     }
-      );
-        this.chatHistory.update(history => {
-            return [...history, {
-          role: 'model',
-          parts: data['result']
-        }]});
-      this.setShowSpinner(false);
-      });
+                parts: this.prompt,
+              },
+            ];
+          });
+          this.chatHistory.update((history) => {
+            return [
+              ...history,
+              {
+                role: 'model',
+                parts: data['result'],
+              },
+            ];
+          });
+          this.setShowSpinner(false);
+        });
     } catch (error: any) {
       this.sendError(error.message);
       this.setShowSpinner(false);
@@ -228,19 +279,18 @@ export class PromptInputComponent implements OnInit {
       window.scrollTo({
         top: document.body.scrollHeight,
         behavior: 'smooth',
-      }),
+      })
     );
   });
   get isPromptFieldEmpty(): boolean {
     return this.form.value.prompt?.length === 0;
   }
 
-
   sendMessage(form: NgForm, messageText: string): void {
     this.appService.sendMessage(messageText);
     form.resetForm();
   }
-  clearSearch(){
+  clearSearch() {
     this.prompt = '';
     (this.form as FormGroup).controls[this.promptControl].setValue('');
   }

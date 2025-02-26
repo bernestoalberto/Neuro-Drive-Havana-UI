@@ -1,0 +1,41 @@
+<div class="upload-container" cdkDrag>
+  <input
+    type="file"
+    id="file-input"
+    mat-input
+    #fileInput
+    accept="image/*"
+    (change)="onFileSelected($event)"
+  />
+
+  @if (selectedFile) {
+    <div class="preview">
+      <img [src]="previewUrl" alt="Image Preview" />
+      <button mat-raised-button color="primary" (click)="removeImage()">
+        <mat-icon>trash</mat-icon>
+        Remove
+      </button>
+    </div>
+  }
+
+  @if (uploadProgress) {
+    <mat-progress-bar
+      class="example-margin"
+      [color]="color"
+      [mode]="mode"
+      [value]="progressValue"
+      [bufferValue]="bufferValue"
+    >
+    </mat-progress-bar>
+  }
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmitUpload()"
+    [disabled]="!selectedFile"
+  >
+    <mat-icon>upload</mat-icon>
+    Upload
+  </button>
+</div>

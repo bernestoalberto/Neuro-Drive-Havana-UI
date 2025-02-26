@@ -6,7 +6,7 @@ import {
 } from '@angular/router';
 
 import { AppService } from '../app.service';
-import { Answer } from './helper';
+import { Answer } from '../shared/helper';
 
 @Injectable({ providedIn: 'root' })
 export class PromptResolverService implements Resolve<Answer[]> {

@@ -6,7 +6,7 @@ export const promptResolver: ResolveFn<boolean> = (route, state) => {
   const appService = inject(AppService);
   const answers = appService.getAnswers();
 
-  if (answers.length === 0) {
+  if (answers.length > 0) {
     return true;
   } else {
     return false;

@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "deployUrl": "/",
             "outputPath": "dist/neuro-ai",
             "index": "src/index.html",
             "browser": "src/main.ts",

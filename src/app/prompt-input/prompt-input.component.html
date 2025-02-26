@@ -1,75 +1,116 @@
-
 <div class="container">
-  <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
-  <div class="selector-container">
- <mat-form-field>
-   <mat-label>AI Providers</mat-label>
-   <mat-select id="ai-provider" [formControlName]="aiProviderControl">
-         @for (ai of aiProviders; track ai.id) {
-           <mat-option   [value]="ai.name">{{ai.name}}</mat-option>
-         }
-   </mat-select>
- </mat-form-field>
-   </div>
-  <div class="selector-container">
- <mat-form-field>
-   <mat-label>AI Models</mat-label>
-   <mat-select id="model-list" [formControlName]="modelControl" >
-     @for (group of currentodel; track group) {
-       <mat-optgroup [label]="group.name"
-                     [disabled]="group.disabled">
-         @for (model of group.model; track model) {
-           <mat-option   [value]="model.value">{{model.viewValue}}</mat-option>
-         }
-       </mat-optgroup>
-     }
-   </mat-select>
- </mat-form-field>
-   </div>
+  <app-tab-group
+    [tabs]="tabs"
+    [content]="contents"
+    (tabClicked)="index = $event"
+  >
+  </app-tab-group>
+  @if (index === 0) {
+    <ng-container *ngTemplateOutlet="text"></ng-container>
+    <hr />
+  }
+  @if (index === 1) {
+    <ng-container *ngTemplateOutlet="images"></ng-container>
+    <hr />
+  }
+  @if (index === 2) {
+    2
+    <ng-container *ngTemplateOutlet="voice"></ng-container>
+    <hr />
+  }
+  <ng-template #text>
+    <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+      <div class="selector-container">
+        <mat-form-field>
+          <mat-label>AI Providers</mat-label>
+          <mat-select id="ai-provider" [formControlName]="aiProviderControl">
+            @for (ai of aiProviders; track ai.id) {
+              <mat-option [value]="ai.name">{{ ai.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="selector-container">
+        <mat-form-field>
+          <mat-label>AI Models</mat-label>
+          <mat-select id="model-list" [formControlName]="modelControl">
+            @for (group of currentodel; track group) {
+              <mat-optgroup [label]="group.name" [disabled]="group.disabled">
+                @for (model of group.model; track model) {
+                  <mat-option [value]="model.value">{{
+                    model.viewValue
+                  }}</mat-option>
+                }
+              </mat-optgroup>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-   <!---add model selector ---->
-  @if(showSpinner()) {
-    <app-loading-spinner></app-loading-spinner>
-    }
+      @if (showSpinner()) {
+        <app-loading-spinner></app-loading-spinner>
+      }
 
+      <div class="input-container">
+        <mat-form-field>
+          <textarea
+            id="prompt-area"
+            matInput
+            [formControlName]="promptControl"
+            placeholder="Type your query here"
+            rows="4"
+            cols="80"
+          >
+          </textarea>
+          <button
+            mat-icon-button
+            matSuffix
+            [disabled]="
+              showSpinner() ||
+              form.invalid ||
+              isModelFieldEmpty ||
+              isPromptFieldEmpty
+            "
+            (click)="onFormSubmit()"
+            [attr.aria-label]="'Search Results'"
+            [attr.aria-pressed]="hide()"
+          >
+            <mat-icon>search</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            matSuffix
+            [disabled]="
+              showSpinner() ||
+              form.invalid ||
+              isModelFieldEmpty ||
+              isPromptFieldEmpty
+            "
+            (click)="clearSearch()"
+            [attr.aria-label]="'Clear prompt'"
+            [attr.aria-pressed]="hide()"
+          >
+            <mat-icon>clear</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      @for (message of messages(); track message.id) {
+        <pre
+          class="message"
+          [ngClass]="{
+            'from-user': message.fromUser,
+            generating: message.generating,
+          }"
+          >{{ message.text }}</pre
+        >
+      }
+    </form>
 
-<div class="input-container">
-  <mat-form-field>
-  <textarea id="prompt-area" matInput [formControlName]="promptControl"   placeholder="Type your query here" rows="4"   cols="80">
-  </textarea>
-  <button
-    mat-icon-button
-    matSuffix
-    [disabled]="showSpinner() || form.invalid || isModelFieldEmpty || isPromptFieldEmpty"
-    (click)="onFormSubmit()"
-    [attr.aria-label]="'Search Results'"
-    [attr.aria-pressed]="hide()">
-    <mat-icon>search</mat-icon>
-  </button>
-  <button
-    mat-icon-button
-    matSuffix
-    [disabled]="showSpinner() || form.invalid || isModelFieldEmpty || isPromptFieldEmpty"
-    (click)="clearSearch()"
-    [attr.aria-label]="'Clear prompt'"
-    [attr.aria-pressed]="hide()">
-    <mat-icon>clear</mat-icon>
-</button>
-</mat-form-field>
+    <app-error-result [errorMessage]="error"></app-error-result>
+    <app-search-result [chatHistory]="chatHistory()"></app-search-result>
+  </ng-template>
+  <ng-template #images>
+    <app-image-upload></app-image-upload>
+  </ng-template>
+  <ng-template #voice> Implement voice component </ng-template>
 </div>
-@for (message of messages(); track message.id) {
-  <pre
-    class="message"
-    [ngClass]="{
-      'from-user': message.fromUser,
-      generating: message.generating
-    }"
-    >{{ message.text }}</pre>
-}
-</form>
-
-<app-error-result [errorMessage]="error"></app-error-result>
-<app-search-result [chatHistory]="chatHistory()"></app-search-result>
-</div>
-
-
