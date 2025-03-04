@@ -5,6 +5,7 @@ import {
   signal,
   WritableSignal,
   OnInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 
 import { AppService } from '../app.service';
@@ -58,6 +59,7 @@ import { ImageUploadComponent } from "./image-upload/image-upload.component";
 ],
   templateUrl: './prompt-input.component.html',
   styleUrl: './prompt-input.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PromptInputComponent implements OnInit {
   prompt: string = '';

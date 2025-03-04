@@ -112,7 +112,45 @@ export class AppService {
         })
       );
   }
-
+  createImage(
+    history: string,
+    model: string,
+    message: string,
+    typeOfAi: string
+  ): Observable<any> {
+    const localToken = localStorage.getItem('userData');
+    const token = localToken ? JSON.parse(localToken) : idToken(this.auth);
+    const body = JSON.stringify({
+      idToken: token._token,
+      history,
+      message,
+      model,
+      typeOfAi,
+    });
+    
+  }
+  uploadImage(
+    formData: FormData,
+    history: any[],
+    message: string,
+    model: string = 'gemini-1.5-flash',
+    typeOfAI: string = AI_NAME.GEMINI
+  ): Observable<any> {
+    const url = `http://${window.location.hostname}:8000/photos/upload`;
+    const localToken = localStorage.getItem('userData');
+    const token = localToken ? JSON.parse(localToken) : idToken(this.auth);
+    const body = JSON.stringify({
+      idToken: token._token,
+      history,
+      message,
+      model,
+      typeOfAI,
+    });
+    formData.append('query', body);
+    return this.http.post(url, formData, {
+      reportProgress: true,
+    });
+  }
   getResponse(
     history: any[],
     message: string,
@@ -132,9 +170,14 @@ export class AppService {
         history,
         message,
         model,
+        typeOfAI,
       },
     });
+    const url = this.getUrlBasedOnModel(typeOfAI);
 
+    return this.http.post(url, body, options);
+  }
+  getUrlBasedOnModel(typeOfAI: string): string {
     let url = `http://${window.location.hostname}:8000/gemini`;
     if (typeOfAI.toLowerCase().includes(AI_NAME.OPENAI.toLowerCase())) {
       url = `http://${window.location.hostname}:8000/openai`;
@@ -149,8 +192,7 @@ export class AppService {
         ? `http://192.168.137.2:8000/search`
         : `http://${window.location.hostname}:8000/search`;
     }
-
-    return this.http.post(url, body, options);
+    return url;
   }
   getOS(): string {
     if ((navigator as any).userAgentData?.platform) {
@@ -166,18 +208,6 @@ export class AppService {
     }
   }
 
-  uploadImage(formData: FormData): Observable<any> {
-    const url = `http://${window.location.hostname}:8000/photos/upload`;
-    // const httpOptions = {
-    //   headers: new HttpHeaders({
-    //     'Content-Type': 'multipart/form-data',
-    //   }),
-    // };
-    return this.http.post(url, formData, {
-      reportProgress: true,
-      observe: 'events',
-    });
-  }
   onCreateFirebasePost(postData: { title: string; content: string }) {
     const url = 'https://appconex-d8cb0-default-rtdb.firebaseio.com/posts.json';
     this.http

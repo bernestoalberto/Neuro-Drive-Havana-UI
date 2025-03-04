@@ -21,4 +21,11 @@ input[type="file"] {
 
 .example-margin {
   margin: 0 10px;
+  background-color: black;
+}
+.example-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 60px;
 }
