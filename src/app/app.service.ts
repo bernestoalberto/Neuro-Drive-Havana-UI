@@ -4,9 +4,11 @@ import {
   HttpEvent,
   HttpEventType,
   HttpHeaders,
+  httpResource,
+  HttpResourceRef,
   HttpResponse,
 } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, Injector, inject, signal } from '@angular/core';
 import { Observable, Subject, filter, map, startWith } from 'rxjs';
 import { AI_NAME } from './shared/helper';
 import {
@@ -36,6 +38,7 @@ export interface Post {
 })
 export class AppService {
   private readonly http = inject(HttpClient);
+  injector = inject(Injector);
   private auth = inject(Auth);
   error = new Subject<string>();
   private readonly _completeMessages = signal<Message[]>([]);
@@ -127,7 +130,9 @@ export class AppService {
       model,
       typeOfAi,
     });
-    
+    const url = `http://${window.location.hostname}:8000/photos/generate`;
+    // return httpResource<any>({ url, body }, { injector: this.injector });
+    return this.http.post(url, body);
   }
   uploadImage(
     formData: FormData,

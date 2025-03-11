@@ -62,12 +62,14 @@ export class ImageUploadComponent implements OnInit {
   selectedFile: File | null = null;
   anotherSelected: File | null = null;
   fileData: string = '';
+  imageResult: string | ArrayBuffer | null = '';
   previewUrl: string | ArrayBuffer | null = '';
   uploadProgress = 0;
   checked = model(false);
   color: ThemePalette = 'primary';
   mode: ProgressBarMode = 'determinate';
   progressValue = 50;
+  showFileInput = true;
   bufferValue = 75;
   outputBoxVisible = false;
   progress = `0%`;
@@ -198,9 +200,11 @@ export class ImageUploadComponent implements OnInit {
       this.currentodel = [...[], group];
     });
     this.form.controls.promptType.valueChanges.subscribe((value) => {
-      let validators = null;
+      let validators = [Validators.required];
+      this.showFileInput = true;
       if (value) {
-        validators = [Validators.required];
+        this.showFileInput = false;
+        validators = [];
       }
       this.form.controls.image.setValidators(validators);
     });
@@ -312,14 +316,10 @@ export class ImageUploadComponent implements OnInit {
   onFormSubmit() {
     this.form.markAllAsTouched();
     if (this.form.valid) {
-      if (this.form.value.promptType) {
-        this.onSubmitUpload();
-        return;
-      }
       this.setShowSpinner();
-      const { prompt, model, aiProvider } = this.form.value;
-      this.appService
-        .createImage(
+      if (this.form.value.promptType) {
+        const { prompt, model, aiProvider } = this.form.value;
+        const imageResult = this.appService.createImage(
           this.chatHistory(),
           `${prompt}`,
           `${model}`,
@@ -348,6 +348,9 @@ export class ImageUploadComponent implements OnInit {
           });
           this.setShowSpinner(false);
         });
+        return;
+      }
+      this.onSubmitUpload();
     } else {
       this.appService.openSnackBar();
       this.sendError('Please fill all required fields');

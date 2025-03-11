@@ -1,15 +1,14 @@
 <div class="upload-container" cdkDrag>
-  <form [formGroup]="form" (ngSubmit)="onSubmitUpload()">
+  <form [formGroup]="form">
     <section class="example-section">
-      <mat-checkbox class="example-margin"
-        [formControlName]="promptType"
+      <mat-checkbox class="example-margin" [formControlName]="promptType"
         >Text to image?</mat-checkbox
       >
     </section>
     <input
       type="file"
       id="file-input"
-      required
+      [required]="showFileInput"
       [formControlName]="imageControl"
       #fileInput
       accept="image/*"
@@ -81,7 +80,7 @@
             isModelFieldEmpty ||
             isPromptFieldEmpty
           "
-          (click)="onSubmitUpload()"
+          (click)="onFormSubmit()"
           [attr.aria-label]="'Search Results'"
           [attr.aria-pressed]="hide()"
         >
@@ -124,6 +123,13 @@
       Upload
     </button> -->
   </form>
-  <app-error-result [errorMessage]="error"></app-error-result>
-  <app-search-result [chatHistory]="chatHistory()"></app-search-result>
+  @if (!this.form.value.promptType) {
+    <div class="preview">
+      <img [src]="imageResult" alt="Image Preview" />
+    </div>
+  }
+  @if (this.form.value.promptType && imageResult) {
+    <app-error-result [errorMessage]="error"></app-error-result>
+    <app-search-result [chatHistory]="chatHistory()"></app-search-result>
+  }
 </div>
