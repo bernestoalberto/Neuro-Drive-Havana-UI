@@ -1,7 +1,6 @@
 import {
   ApplicationConfig,
   importProvidersFrom,
-  inject,
   isDevMode,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';

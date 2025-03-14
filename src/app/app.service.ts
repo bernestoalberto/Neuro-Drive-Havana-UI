@@ -119,20 +119,24 @@ export class AppService {
     history: string,
     model: string,
     message: string,
-    typeOfAi: string
+    typeOfAI: string
   ): Observable<any> {
     const localToken = localStorage.getItem('userData');
     const token = localToken ? JSON.parse(localToken) : idToken(this.auth);
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
     const body = JSON.stringify({
       idToken: token._token,
-      history,
-      message,
-      model,
-      typeOfAi,
+      query: {
+        history,
+        message,
+        model,
+        typeOfAI,
+      },
     });
+
     const url = `http://${window.location.hostname}:8000/photos/generate`;
     // return httpResource<any>({ url, body }, { injector: this.injector });
-    return this.http.post(url, body);
+    return this.http.post(url, body, { headers });
   }
   uploadImage(
     formData: FormData,
@@ -217,7 +221,7 @@ export class AppService {
     const url = 'https://appconex-d8cb0-default-rtdb.firebaseio.com/posts.json';
     this.http
       .post<{ name: string }>(url, postData)
-      .subscribe((responseData) => {});
+      .subscribe((responseData: any) => {});
   }
   onFetchFirebasePost(): Observable<Post[]> {
     const url = 'https://appconex-d8cb0-default-rtdb.firebaseio.com/posts.json';

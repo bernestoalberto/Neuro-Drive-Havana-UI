@@ -321,8 +321,8 @@ export class ImageUploadComponent implements OnInit {
         const { prompt, model, aiProvider } = this.form.value;
         const imageResult = this.appService.createImage(
           this.chatHistory(),
-          `${prompt}`,
           `${model}`,
+          `${prompt}`,
           `${aiProvider}`
         )
         .subscribe((data: { result: any }) => {
