@@ -12,11 +12,11 @@ import { AppService, Post } from './app.service';
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
 
 import { ToolbarComponent } from './shared/toolbar/toolbar.component';
-import { DashboardComponent } from "./shared/dashboard/dashboard.component";
+
 @Component({
   selector: 'app-root',
   encapsulation: ViewEncapsulation.Emulated,
-  imports: [RouterOutlet, ToolbarComponent, DashboardComponent],
+  imports: [RouterOutlet, ToolbarComponent],
   providers: [
     AppService,
     {
