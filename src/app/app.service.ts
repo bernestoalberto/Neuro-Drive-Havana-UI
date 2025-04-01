@@ -160,7 +160,8 @@ export class AppService {
       reportProgress: true,
     });
   }
-  getResponse(
+
+  getResponse( // Todo: Integrate http resource
     history: any[],
     message: string,
     typeOfAI: string = AI_NAME.GEMINI,
