@@ -34,7 +34,7 @@ import { DialogComponent } from '../shared/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { TabGroupComponent } from '../shared/tab-group/tab-group-component';
-import { ImageUploadComponent } from "./image-upload/image-upload.component";
+import { ImageUploadComponent } from './image-upload/image-upload.component';
 
 @Component({
   selector: 'app-prompt-input',
@@ -55,11 +55,11 @@ import { ImageUploadComponent } from "./image-upload/image-upload.component";
     ReactiveFormsModule,
     MatTooltipModule,
     MatGridListModule,
-    ImageUploadComponent
-],
+    ImageUploadComponent,
+  ],
   templateUrl: './prompt-input.component.html',
   styleUrl: './prompt-input.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PromptInputComponent implements OnInit {
   prompt: string = '';
@@ -115,6 +115,10 @@ export class PromptInputComponent implements OnInit {
       {
         value: 'gemini-2.0-pro-expreimental',
         viewValue: `${AI_NAME.GEMINI} 2.0 Pro Expreimental`,
+      },
+      {
+        value: 'gemini-2.5-pro-exp-03-25',
+        viewValue: `${AI_NAME.GEMINI} 2.5 Pro`,
       },
       {
         value: 'gemini-2.0-flash',
