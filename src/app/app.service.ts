@@ -4,20 +4,18 @@ import {
   HttpEvent,
   HttpEventType,
   HttpHeaders,
-  httpResource,
-  HttpResourceRef,
   HttpResponse,
 } from '@angular/common/http';
 import { Injectable, Injector, inject, signal } from '@angular/core';
 import { Observable, Subject, filter, map, startWith } from 'rxjs';
-import { AI_NAME } from './shared/helper';
+import { AI_NAME } from './shared/helper.ts';
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
 import { Auth, idToken } from '@angular/fire/auth';
-import { OSType } from './const';
+import { OSType } from './const.ts';
 
 type ModelAnswer = {
   parts: any;
@@ -161,7 +159,8 @@ export class AppService {
     });
   }
 
-  getResponse( // Todo: Integrate http resource
+  getResponse(
+    // Todo: Integrate http resource
     history: any[],
     message: string,
     typeOfAI: string = AI_NAME.GEMINI,
