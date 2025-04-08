@@ -2,6 +2,7 @@ export type AI = 'Gemini' | 'Openai' | 'Deepseek' | 'Llama' | 'Claude';
 
 export enum AI_NAME {
   GEMINI = 'Gemini',
+  GEMMA = 'Gemma',
   OPENAI = 'Openai',
   DEEPSEEK = 'Deepseek',
   LLAMA = 'Llama',

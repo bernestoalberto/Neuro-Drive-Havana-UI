@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import {
   Resolve,
   ActivatedRouteSnapshot,
-  RouterStateSnapshot
+  RouterStateSnapshot,
 } from '@angular/router';
 
-import { AppService } from '../app.service';
-import { Answer } from '../shared/helper';
+import { AppService } from '../app.service.ts';
+import { Answer } from '../shared/helper.ts';
+import { Observable, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PromptResolverService implements Resolve<Answer[]> {
@@ -14,13 +15,13 @@ export class PromptResolverService implements Resolve<Answer[]> {
     private appService: AppService
   ) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const answers = this.appService.();
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Answer[]> {
+    const answers = this.appService.getAnswers();
 
     if (answers.length === 0) {
-      return this.appService.fetchRecipes();
+      return this.appService.fetchAnswers();
     } else {
-      return answers;
+      return of(answers);
     }
   }
 }

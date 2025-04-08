@@ -8,7 +8,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 
-import { AppService } from '../app.service';
+import { AppService } from '../app.service.ts';
 import { MatButtonModule } from '@angular/material/button';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -16,11 +16,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { ModelGroup, AiProvider, AI_NAME, Tab } from '../shared/helper';
+import { ModelGroup, AiProvider, AI_NAME, Tab } from '../shared/helper.ts';
 import { CommonModule } from '@angular/common';
-import { SearchResultComponent } from './search-result/search-result.component';
-import { ErrorResultComponent } from './error-result/error-result.component';
-import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component';
+import { SearchResultComponent } from './search-result/search-result.component.ts';
+import { ErrorResultComponent } from './error-result/error-result.component.ts';
+import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component.ts';
 import { MatSelectModule } from '@angular/material/select';
 import {
   FormControl,
@@ -99,10 +99,12 @@ export class PromptInputComponent implements OnInit {
     ]),
     aiProvider: new FormControl('', [Validators.required]),
     prompt: new FormControl('', [Validators.required]),
+    gemmaOptions: new FormControl('text')
   });
   aiProviderControl = 'aiProvider';
   modelControl = 'model';
   promptControl = 'prompt';
+  gemmaOptionsControl = 'gemmaOptions';
 
   geminiModelGroup: ModelGroup = {
     name: AI_NAME.GEMINI,
@@ -127,6 +129,10 @@ export class PromptInputComponent implements OnInit {
       {
         value: 'gemini-1.5-flash',
         viewValue: `${AI_NAME.GEMINI} 1.5 flash`,
+      },
+      {
+        value: 'gemma-3-4b-it',
+        viewValue: `${AI_NAME.GEMMA} 3`,
       },
     ],
   };
@@ -172,7 +178,7 @@ export class PromptInputComponent implements OnInit {
   ];
 
   hide = signal(true);
-  clickEvent(event: MouseEvent) {
+  clickEvent(event: CloseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
   }
@@ -233,14 +239,20 @@ export class PromptInputComponent implements OnInit {
   // }
   getResponseFromAI() {
     try {
-      const { aiProvider, prompt, model } = this.form.value;
+      const { aiProvider, prompt, model, gemmaOptions } = this.form.value;
       this.setShowSpinner();
+
+      // Include gemmaOptions parameter when model is gemma 3
+      const modelOptions = model === 'gemma-3-4b-it' ?
+        { model: `${model}`, options: gemmaOptions || 'text' } :
+        `${model}`;
+
       this.appService
         .getResponse(
           this.chatHistory(),
           `${prompt}`,
           `${aiProvider}`,
-          `${model}`
+          modelOptions
         )
         .subscribe((data) => {
           this.clearStatus.set(false);
@@ -249,7 +261,6 @@ export class PromptInputComponent implements OnInit {
               ...history,
               {
                 role: 'user',
-
                 parts: this.prompt,
               },
             ];

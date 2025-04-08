@@ -6,8 +6,15 @@ import {
   HttpHeaders,
   HttpResponse,
 } from '@angular/common/http';
-import { Injectable, Injector, inject, signal } from '@angular/core';
-import { Observable, Subject, filter, map, startWith } from 'rxjs';
+import { Injectable, Injector, inject, signal, resource } from '@angular/core';
+import {
+  Observable,
+  Subject,
+  filter,
+  map,
+  startWith,
+  firstValueFrom,
+} from 'rxjs';
 import { AI_NAME } from './shared/helper.ts';
 import {
   MatSnackBar,
@@ -15,7 +22,7 @@ import {
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
 import { Auth, idToken } from '@angular/fire/auth';
-import { OSType } from './const.ts';
+import { OSType } from './project-const.ts';
 
 type ModelAnswer = {
   parts: any;
@@ -76,9 +83,10 @@ export class AppService {
 
   private getChatResponseStream(prompt: string): Observable<Message> {
     const id = window.crypto.randomUUID();
+    const serverUrl = 'http://localhost:3000/message';
 
     return this.http
-      .post('http://localhost:3000/message', prompt, {
+      .post(serverUrl, prompt, {
         responseType: 'text',
         observe: 'events',
         reportProgress: true,
@@ -113,6 +121,7 @@ export class AppService {
         })
       );
   }
+
   createImage(
     history: string,
     model: string,
@@ -164,7 +173,7 @@ export class AppService {
     history: any[],
     message: string,
     typeOfAI: string = AI_NAME.GEMINI,
-    model: string = 'gemini-1.5-flash'
+    model: string | { model: string; options: string } = 'gemini-1.5-flash'
   ): Observable<any> {
     const options = {
       headers: {
@@ -173,12 +182,25 @@ export class AppService {
     };
     const localToken = localStorage.getItem('userData');
     const token = localToken ? JSON.parse(localToken) : idToken(this.auth);
+
+    // Handle model parameter which can be a string or an object with options
+    let modelValue: string;
+    let modelOptions: any = null;
+
+    if (typeof model === 'string') {
+      modelValue = model;
+    } else {
+      modelValue = model.model;
+      modelOptions = model.options;
+    }
+
     const body = JSON.stringify({
       idToken: token._token,
       query: {
         history,
         message,
-        model,
+        model: modelValue,
+        modelOptions,
         typeOfAI,
       },
     });
@@ -186,6 +208,62 @@ export class AppService {
 
     return this.http.post(url, body, options);
   }
+
+  /**
+   * Creates a resource API function to handle message responses using Angular's resource API
+   * @param history Conversation history
+   * @param message User message
+   * @param typeOfAI AI type, defaults to GEMINI
+   * @param model Model name, defaults to gemini-1.5-flash
+   */
+  getResponseHttpResourceApi(
+    history: any[],
+    message: string,
+    typeOfAI: string = AI_NAME.GEMINI,
+    model: string | { model: string; options: string } = 'gemini-1.5-flash'
+  ) {
+    const auth = inject(Auth);
+    const http = inject(HttpClient);
+    const localToken = localStorage.getItem('userData');
+    const token = localToken ? JSON.parse(localToken) : idToken(auth);
+    const url = this.getUrlBasedOnModel(typeOfAI);
+
+    // Handle model parameter which can be a string or an object with options
+    let modelValue: string;
+    let modelOptions: any = null;
+
+    if (typeof model === 'string') {
+      modelValue = model;
+    } else {
+      modelValue = model.model;
+      modelOptions = model.options;
+    }
+
+    const requestBody = {
+      idToken: token._token,
+      query: {
+        history,
+        message,
+        model: modelValue,
+        modelOptions,
+        typeOfAI,
+      },
+    };
+
+    const requestOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    // Create a resource with a proper loader function
+    return resource<any, undefined>({
+      loader() {
+        return firstValueFrom(http.post(url, requestBody, requestOptions));
+      },
+    });
+  }
+
   getUrlBasedOnModel(typeOfAI: string): string {
     let url = `http://${window.location.hostname}:8000/gemini`;
     if (typeOfAI.toLowerCase().includes(AI_NAME.OPENAI.toLowerCase())) {

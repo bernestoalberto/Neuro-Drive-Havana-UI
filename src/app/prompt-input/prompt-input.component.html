@@ -47,6 +47,21 @@
         </mat-form-field>
       </div>
 
+      <!-- Gemma 3 specific options -->
+      @if (form.get(modelControl)?.value === 'gemma-3-4b-it') {
+        <div class="selector-container">
+          <mat-form-field>
+            <mat-label>Gemma 3 Options</mat-label>
+            <mat-select [formControlName]="gemmaOptionsControl">
+              <mat-option value="text">Text</mat-option>
+              <mat-option value="chat">Chat</mat-option>
+              <mat-option value="embedding">Embedding</mat-option>
+            </mat-select>
+            <mat-hint>Select Gemma 3 mode</mat-hint>
+          </mat-form-field>
+        </div>
+      }
+
       @if (showSpinner()) {
         <app-loading-spinner></app-loading-spinner>
       }
