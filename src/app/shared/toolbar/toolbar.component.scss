@@ -1,4 +1,6 @@
 @use '@angular/material' as mat;
+$primary: #e81a28;
+$primary-contrast: white;
 
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -17,8 +19,7 @@ body {
   ));
 }
 
-$primary: #e81a28;
-$primary-contrast: white;
+
 
 
 .button {

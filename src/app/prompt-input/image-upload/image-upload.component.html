@@ -1,0 +1,135 @@
+<div class="upload-container" cdkDrag>
+  <form [formGroup]="form">
+    <section class="example-section">
+      <mat-checkbox class="example-margin" [formControlName]="promptType"
+        >Text to image?</mat-checkbox
+      >
+    </section>
+    <input
+      type="file"
+      id="file-input"
+      [required]="showFileInput"
+      [formControlName]="imageControl"
+      #fileInput
+      accept="image/*"
+      (change)="onFileSelected($event)"
+    />
+    @if (selectedFile) {
+      <div class="preview">
+        <img [src]="previewUrl" alt="Image Preview" />
+        <button mat-raised-button color="primary" (click)="removeImage()">
+          <mat-icon>trash</mat-icon>
+          Remove
+        </button>
+      </div>
+    }
+
+    @if (uploadProgress) {
+      <mat-progress-bar
+        class="example-margin"
+        [color]="color"
+        [mode]="mode"
+        [value]="progressValue"
+        [bufferValue]="bufferValue"
+      >
+      </mat-progress-bar>
+    }
+    <div class="selector-container">
+      <mat-form-field>
+        <mat-label>AI Providers</mat-label>
+        <mat-select id="ai-provider" [formControlName]="aiProviderControl">
+          @for (ai of aiProviders; track ai.id) {
+            <mat-option [value]="ai.name">{{ ai.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="selector-container">
+      <mat-form-field>
+        <mat-label>AI Models</mat-label>
+        <mat-select id="model-list" [formControlName]="modelControl">
+          @for (group of currentodel; track group) {
+            <mat-optgroup [label]="group.name" [disabled]="group.disabled">
+              @for (model of group.model; track model) {
+                <mat-option [value]="model.value">{{
+                  model.viewValue
+                }}</mat-option>
+              }
+            </mat-optgroup>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="input-container">
+      <mat-form-field>
+        <textarea
+          id="prompt-area"
+          matInput
+          [formControlName]="promptControl"
+          placeholder="Type your query here"
+          rows="4"
+          cols="80"
+        >
+        </textarea>
+        <button
+          mat-icon-button
+          matSuffix
+          [disabled]="
+            showSpinner() ||
+            form.invalid ||
+            isModelFieldEmpty ||
+            isPromptFieldEmpty
+          "
+          (click)="onFormSubmit()"
+          [attr.aria-label]="'Search Results'"
+          [attr.aria-pressed]="hide()"
+        >
+          <mat-icon>search</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          matSuffix
+          [disabled]="
+            showSpinner() ||
+            form.invalid ||
+            isModelFieldEmpty ||
+            isPromptFieldEmpty
+          "
+          (click)="clearSearch()"
+          [attr.aria-label]="'Clear prompt'"
+          [attr.aria-pressed]="hide()"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-form-field>
+      @for (message of messages(); track message.id) {
+        <pre
+          class="message"
+          [ngClass]="{
+            'from-user': message.fromUser,
+            generating: message.generating,
+          }"
+          >{{ message.text }}</pre
+        >
+      }
+    </div>
+    <!-- <button
+      mat-raised-button
+      color="primary"
+      (click)="onSubmitUpload()"
+      [disabled]="!selectedFile"
+    >
+      <mat-icon>upload</mat-icon>
+      Upload
+    </button> -->
+  </form>
+  @if (!this.form.value.promptType) {
+    <div class="preview">
+      <img [src]="imageResult" alt="Image Preview" />
+    </div>
+  }
+  @if (this.form.value.promptType && imageResult) {
+    <app-error-result [errorMessage]="error"></app-error-result>
+    <app-search-result [chatHistory]="chatHistory()"></app-search-result>
+  }
+</div>
