@@ -1,0 +1,37 @@
+name: Neuro Drive Havana CI/CD # A name for your workflow
+
+on:
+  push:
+    branches: ["main"] # Trigger this workflow on pushes to the 'main' branch (adjust as needed)
+  pull_request:
+    branches: ["main"] # Optionally trigger on pull requests to the 'main' branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # The type of virtual machine to run the job on
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Action to checkout your repository code
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.15.0" # Specify your Node.js version
+
+      - name: Install dependencies
+        run: npm ci # Use 'npm ci' for cleaner installs in CI environments
+
+      - name: Build Angular application
+        run: ng build --configuration production --aot
+
+      # Deployment steps will go here, specific to your chosen provider
+      - name: Deploy to Firebase Hosting
+        uses: wzieba/Firebase-Hosting-Action@v2.0.0
+        with:
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }} # Firebase service account key
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }} # Firebase project ID
+          channelId: live # The channel ID for deployment (e.g., 'live')
+          workingDirectory: ./dist/neurodrive-havana # Directory to deploy
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }} # Firebase token for authentication
