@@ -50,3 +50,7 @@ Thumbs.db
 .firebase
 *-debug.log
 .runtimeconfig.json
+
+
+# Build
+.dist
