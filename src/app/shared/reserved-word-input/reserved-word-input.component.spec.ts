@@ -8,7 +8,8 @@ describe('ReservedWordInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReservedWordInputComponent]
+      imports: [ReservedWordInputComponent],
+      declarations: [] // Add any additional declarations if needed
     })
     .compileComponents();
 

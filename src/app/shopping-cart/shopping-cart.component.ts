@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
 
   imports: [],
   templateUrl: './shopping-cart.component.html',
-  styleUrl: './shopping-cart.component.sass'
+  styleUrl: './shopping-cart.component.scss',
 })
-export class ShoppingCartComponent {
-
-}
+export class ShoppingCartComponent {}

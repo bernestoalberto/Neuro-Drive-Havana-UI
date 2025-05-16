@@ -17,7 +17,8 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/bonetgenai",
+            "deployUrl": "/",
+            "outputPath": "dist/neuro-ai",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -47,6 +48,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "4mb",
+
                   "maximumError": "5mb"
                 }
               ],

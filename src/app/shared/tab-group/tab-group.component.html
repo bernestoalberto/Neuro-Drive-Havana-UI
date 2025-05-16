@@ -1,0 +1,19 @@
+<mat-tab-group
+  color="warn"
+  [selectedIndex]="selected()"
+  (selectedIndexChange)="onTabChanged($event)"
+  mat-stretch-tabs="false"
+  mat-align-tabs="center"
+  animationDuration="1000ms"
+  dynamicHeight
+>
+  @for (tab of tabs(); track tab; let index = $index) {
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="example-tab-icon">{{ content[index].icon }}</mat-icon>
+        {{ tab }}
+      </ng-template>
+      <!-- <ng-template matTabContent> Content 3 - Loaded: </ng-template> -->
+    </mat-tab>
+  }
+</mat-tab-group>
