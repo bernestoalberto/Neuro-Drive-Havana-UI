@@ -1,16 +1,31 @@
-import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
-import { Observable, Subject, filter, map, startWith } from 'rxjs';
-import { AI, AI_NAME } from './prompt-input/helper';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import { Auth } from '@angular/fire/auth';
-import { OSType } from './const';
-
-
-
+import {
+  HttpClient,
+  HttpDownloadProgressEvent,
+  HttpEvent,
+  HttpEventType,
+  HttpHeaders,
+  HttpResponse,
+} from '@angular/common/http';
+import { Injectable, Injector, inject, signal, resource } from '@angular/core';
+import {
+  Observable,
+  Subject,
+  filter,
+  map,
+  startWith,
+  firstValueFrom,
+} from 'rxjs';
+import { AI_NAME } from './shared/helper.ts';
+import {
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
+import { Auth, idToken } from '@angular/fire/auth';
+import { OSType } from './project-const.ts';
 
 type ModelAnswer = {
-  parts: any
+  parts: any;
 };
 export interface Message {
   id: string;
@@ -26,19 +41,18 @@ export interface Post {
 @Injectable({
   providedIn: 'root',
 })
-
 export class AppService {
-
   private readonly http = inject(HttpClient);
+  injector = inject(Injector);
   private auth = inject(Auth);
   error = new Subject<string>();
   private readonly _completeMessages = signal<Message[]>([]);
   private readonly _messages = signal<Message[]>([]);
   private readonly _generatingInProgress = signal<boolean>(false);
   private _snackBar = inject(MatSnackBar);
-    horizontalPosition: MatSnackBarHorizontalPosition = 'start';
-    verticalPosition: MatSnackBarVerticalPosition = 'bottom';
-    durationInSeconds = 5;
+  horizontalPosition: MatSnackBarHorizontalPosition = 'start';
+  verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+  durationInSeconds = 5;
   readonly messages = this._messages.asReadonly();
   readonly generatingInProgress = this._generatingInProgress.asReadonly();
 
@@ -69,9 +83,10 @@ export class AppService {
 
   private getChatResponseStream(prompt: string): Observable<Message> {
     const id = window.crypto.randomUUID();
+    const serverUrl = 'http://localhost:3000/message';
 
     return this.http
-      .post('http://localhost:3000/message', prompt, {
+      .post(serverUrl, prompt, {
         responseType: 'text',
         observe: 'events',
         reportProgress: true,
@@ -80,7 +95,7 @@ export class AppService {
         filter(
           (event: HttpEvent<string>): boolean =>
             event.type === HttpEventType.DownloadProgress ||
-            event.type === HttpEventType.Response,
+            event.type === HttpEventType.Response
         ),
         map(
           (event: HttpEvent<string>): Message =>
@@ -96,46 +111,175 @@ export class AppService {
                   text: (event as HttpResponse<string>).body!,
                   fromUser: false,
                   generating: false,
-                },
+                }
         ),
         startWith<Message>({
           id,
           text: '',
           fromUser: false,
           generating: true,
-        }),
+        })
       );
   }
 
-  getResponse(history: any[], message: string, typeOfAI : string = AI_NAME.GEMINI, model: string = 'gemini-1.5-flash'): Observable<any> {
-    const options = {
-      headers : {
-        'Content-Type': 'application/json'
-      },
-     };
-     const token = this.auth.currentUser?.getIdToken();
-     const body = JSON.stringify({
-      idToken: token,
+  createImage(
+    history: string,
+    model: string,
+    message: string,
+    typeOfAI: string
+  ): Observable<any> {
+    const localToken = localStorage.getItem('userData');
+    const token = localToken ? JSON.parse(localToken) : idToken(this.auth);
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    const body = JSON.stringify({
+      idToken: token._token,
       query: {
-       history,
-      message,
-      model
-      }
+        history,
+        message,
+        model,
+        typeOfAI,
+      },
     });
-    let url =`http://${window.location.hostname}:8000/gemini`;
-    if(typeOfAI.toLowerCase().includes(AI_NAME.OPENAI.toLowerCase())){
-      url =`http://${window.location.hostname}:8000/openai`;
-    }
-    if(typeOfAI.toLowerCase().includes(AI_NAME.LLAMA.toLowerCase())){
-      url =`http://${window.location.hostname}:8000/llama`;
-    }
-      if(typeOfAI.toLowerCase().includes(AI_NAME.DEEPSEEK.toLowerCase())){
-      url = this.getOS().includes(OSType.Windows)
-       ? `http://192.168.137.2:8000/search`
-       : `http://${window.location.hostname}:8000/search`;
+
+    const url = `http://${window.location.hostname}:8000/photos/generate`;
+    // return httpResource<any>({ url, body }, { injector: this.injector });
+    return this.http.post(url, body, { headers });
+  }
+  uploadImage(
+    formData: FormData,
+    history: any[],
+    message: string,
+    model: string = 'gemini-1.5-flash',
+    typeOfAI: string = AI_NAME.GEMINI
+  ): Observable<any> {
+    const url = `http://${window.location.hostname}:8000/photos/upload`;
+    const localToken = localStorage.getItem('userData');
+    const token = localToken ? JSON.parse(localToken) : idToken(this.auth);
+    const body = JSON.stringify({
+      idToken: token._token,
+      history,
+      message,
+      model,
+      typeOfAI,
+    });
+    formData.append('query', body);
+    return this.http.post(url, formData, {
+      reportProgress: true,
+    });
+  }
+
+  getResponse(
+    // Todo: Integrate http resource
+    history: any[],
+    message: string,
+    typeOfAI: string = AI_NAME.GEMINI,
+    model: string | { model: string; options: string } = 'gemini-1.5-flash'
+  ): Observable<any> {
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const localToken = localStorage.getItem('userData');
+    const token = localToken ? JSON.parse(localToken) : idToken(this.auth);
+
+    // Handle model parameter which can be a string or an object with options
+    let modelValue: string;
+    let modelOptions: any = null;
+
+    if (typeof model === 'string') {
+      modelValue = model;
+    } else {
+      modelValue = model.model;
+      modelOptions = model.options;
     }
 
+    const body = JSON.stringify({
+      idToken: token._token,
+      query: {
+        history,
+        message,
+        model: modelValue,
+        modelOptions,
+        typeOfAI,
+      },
+    });
+    const url = this.getUrlBasedOnModel(typeOfAI);
+
     return this.http.post(url, body, options);
+  }
+
+  /**
+   * Creates a resource API function to handle message responses using Angular's resource API
+   * @param history Conversation history
+   * @param message User message
+   * @param typeOfAI AI type, defaults to GEMINI
+   * @param model Model name, defaults to gemini-1.5-flash
+   */
+  getResponseHttpResourceApi(
+    history: any[],
+    message: string,
+    typeOfAI: string = AI_NAME.GEMINI,
+    model: string | { model: string; options: string } = 'gemini-1.5-flash'
+  ) {
+    const auth = inject(Auth);
+    const http = inject(HttpClient);
+    const localToken = localStorage.getItem('userData');
+    const token = localToken ? JSON.parse(localToken) : idToken(auth);
+    const url = this.getUrlBasedOnModel(typeOfAI);
+
+    // Handle model parameter which can be a string or an object with options
+    let modelValue: string;
+    let modelOptions: any = null;
+
+    if (typeof model === 'string') {
+      modelValue = model;
+    } else {
+      modelValue = model.model;
+      modelOptions = model.options;
+    }
+
+    const requestBody = {
+      idToken: token._token,
+      query: {
+        history,
+        message,
+        model: modelValue,
+        modelOptions,
+        typeOfAI,
+      },
+    };
+
+    const requestOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    // Create a resource with a proper loader function
+    return resource<any, undefined>({
+      loader() {
+        return firstValueFrom(http.post(url, requestBody, requestOptions));
+      },
+    });
+  }
+
+  getUrlBasedOnModel(typeOfAI: string): string {
+    let url = `http://${window.location.hostname}:8000/gemini`;
+    if (typeOfAI.toLowerCase().includes(AI_NAME.OPENAI.toLowerCase())) {
+      url = `http://${window.location.hostname}:8000/openai`;
+    }
+    if (typeOfAI.toLowerCase().includes(AI_NAME.LLAMA.toLowerCase())) {
+      url = this.getOS().includes(OSType.Windows)
+        ? `http://192.168.137.2:8000/llama`
+        : `http://${window.location.hostname}:8000/llama`;
+    }
+    if (typeOfAI.toLowerCase().includes(AI_NAME.DEEPSEEK.toLowerCase())) {
+      url = this.getOS().includes(OSType.Windows)
+        ? `http://192.168.137.2:8000/search`
+        : `http://${window.location.hostname}:8000/search`;
+    }
+    return url;
   }
   getOS(): string {
     if ((navigator as any).userAgentData?.platform) {
@@ -151,50 +295,47 @@ export class AppService {
     }
   }
 
-  uploadImage(formData: FormData): Observable<any>{
-    const url =`http://${window.location.hostname}:8000/uploadImage`;
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "multipart/form-data"
-      })
-    };
-    return this.http.post(url, formData, httpOptions);
-  }
-  onCreateFirebasePost(postData : {title: string, content: string}){
+  onCreateFirebasePost(postData: { title: string; content: string }) {
     const url = 'https://appconex-d8cb0-default-rtdb.firebaseio.com/posts.json';
-    this.http.post<{name: string}>(url, postData).subscribe(responseData => {
-    });
+    this.http
+      .post<{ name: string }>(url, postData)
+      .subscribe((responseData: any) => {});
   }
-  onFetchFirebasePost(): Observable<Post[]>{
+  onFetchFirebasePost(): Observable<Post[]> {
     const url = 'https://appconex-d8cb0-default-rtdb.firebaseio.com/posts.json';
-    return this.http.get<{[key : string] :Post[]}>(url).pipe(
-      map((responseData: any) => { // Todo: {[key: string]: Post }
-      const postArray: Post[] = [];
-      for(const key in responseData){
-        if (responseData.hasOwnProperty(key)){
-          postArray.push({...responseData[key], id: key});
+    return this.http.get<{ [key: string]: Post[] }>(url).pipe(
+      map((responseData: any) => {
+        // Todo: {[key: string]: Post }
+        const postArray: Post[] = [];
+        for (const key in responseData) {
+          if (responseData.hasOwnProperty(key)) {
+            postArray.push({ ...responseData[key], id: key });
+          }
         }
-      }
-      return postArray;
-    }))
+        return postArray;
+      })
+    );
   }
-  onDeleteFirebasePost(id: string){
+  onDeleteFirebasePost(id: string) {
     const url = `https://appconex-d8cb0-default-rtdb.firebaseio.com/posts/${id}.json`;
     return this.http.delete(url);
   }
 
-  getAnswers(){
-    return [{prompt: '', answer: '' }];
+  getAnswers() {
+    return [{ prompt: '', answer: '' }];
   }
-  fetchAnswers(){
-   return [{prompt: '', answer: '' }];
+  fetchAnswers() {
+    return [{ prompt: '', answer: '' }];
   }
-  openSnackBar(text : string= 'Please enter a question', action: string = 'error', duration: number = 5) {
+  openSnackBar(
+    text: string = 'Please enter a question',
+    action: string = 'error',
+    duration: number = 5
+  ) {
     this._snackBar.open(text, action ?? 'close', {
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
-      duration: duration ?? this.durationInSeconds * 1000
+      duration: duration ?? this.durationInSeconds * 1000,
     });
   }
-
 }

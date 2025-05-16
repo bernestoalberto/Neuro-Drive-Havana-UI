@@ -1,0 +1,38 @@
+.example-small-box, .example-large-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.example-small-box {
+  height: 100px;
+  width: 100px;
+}
+
+.example-large-box {
+  height: 300px;
+  width: 300px;
+}
+.example-action-button {
+  margin-top: 8px;
+  margin-right: 8px;
+}
+
+.example-input-label,
+.example-add-tab-button,
+.example-delete-tab-button {
+  margin: 8px;
+}
+
+.mat-mdc-tab .mdc-tab__text-label {
+  color: #337ab7 !important;
+}
+.mat-mdc-tab-group{
+  color: #337ab7 !important;
+}
+.mat-mdc-tab-group {
+  margin-top: 60px;
+}
