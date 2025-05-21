@@ -170,6 +170,7 @@ export class AppService {
 
   getResponse(
     // Todo: Integrate http resource
+
     history: any[],
     message: string,
     typeOfAI: string = AI_NAME.GEMINI,
