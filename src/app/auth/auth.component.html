@@ -22,7 +22,8 @@
         <mat-form-field>
         <mat-label>E-Mail</mat-label>
         <input type="email" matInput [formControlName]="emailControl" [errorStateMatcher]="matcher"
-        placeholder="Ex. pat@example.com">
+        placeholder="Ex. pat@example.com" autocomplete="username webauthn"
+		autofocus>
         <mat-hint>Errors appear instantly!</mat-hint>
         @if (form.controls.email.hasError('email') && !form.controls.email.hasError('required')) {
           <mat-error>Please enter a valid email address</mat-error>
@@ -33,7 +34,7 @@
       </mat-form-field>
         <mat-form-field>
         <mat-label>Password</mat-label>
-        <input matInput autocomplete [type]="hide() ? 'password' : 'text'" [formControlName]="passwordControl" />
+        <input matInput autocomplete="current-password" [type]="hide() ? 'password' : 'text'" [formControlName]="passwordControl" />
         <button
         mat-icon-button
         matSuffix
