@@ -5,23 +5,21 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 
-import { AppService } from '../app.service.ts';
-import { Answer } from '../shared/helper.ts';
-import { Observable, of } from 'rxjs';
+import { AppService } from '../app.service';
+import { Answer } from '../shared/helper';
+import { of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PromptResolverService implements Resolve<Answer[]> {
-  constructor(
-    private appService: AppService
-  ) {}
+  constructor(private appService: AppService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Answer[]> {
-    const answers = this.appService.getAnswers();
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    const answers = this.appService.getAnswers() as Answer[];
 
     if (answers.length === 0) {
-      return this.appService.fetchAnswers();
+      return this.appService.fetchAnswers() as any as Answer[];
     } else {
-      return of(answers);
+      return of(answers as Answer[]);
     }
   }
 }

@@ -15,14 +15,14 @@ import {
   startWith,
   firstValueFrom,
 } from 'rxjs';
-import { AI_NAME } from './shared/helper.ts';
+import { AI_NAME } from './shared/helper';
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
 import { Auth, idToken } from '@angular/fire/auth';
-import { OSType } from './project-const.ts';
+import { OSType } from './project-const';
 
 type ModelAnswer = {
   parts: any;

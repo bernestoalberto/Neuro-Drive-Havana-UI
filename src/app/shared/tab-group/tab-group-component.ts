@@ -24,7 +24,6 @@ export class TabGroupComponent {
   selected = signal(0);
   tabClicked = output<number>();
   activeLink = ' ';
-  constructor() {}
 
   onTabChanged(event: number) {
     this.selected.set(event);
