@@ -99,7 +99,7 @@ export class PromptInputComponent implements OnInit {
     ]),
     aiProvider: new FormControl('', [Validators.required]),
     prompt: new FormControl('', [Validators.required]),
-    gemmaOptions: new FormControl('text')
+    gemmaOptions: new FormControl('text'),
   });
   aiProviderControl = 'aiProvider';
   modelControl = 'model';
@@ -115,10 +115,6 @@ export class PromptInputComponent implements OnInit {
         viewValue: `${AI_NAME.GEMINI} 2.0 Flash Lite Preview`,
       },
       {
-        value: 'gemini-2.0-pro-expreimental',
-        viewValue: `${AI_NAME.GEMINI} 2.0 Pro Expreimental`,
-      },
-      {
         value: 'gemini-2.5-pro-exp-03-25',
         viewValue: `${AI_NAME.GEMINI} 2.5 Pro`,
       },
@@ -127,8 +123,8 @@ export class PromptInputComponent implements OnInit {
         viewValue: `${AI_NAME.GEMINI} 2.0 Flash`,
       },
       {
-        value: 'gemini-1.5-flash',
-        viewValue: `${AI_NAME.GEMINI} 1.5 flash`,
+        value: 'gemini-2.5-flash',
+        viewValue: `${AI_NAME.GEMINI} 2.5 Flash`,
       },
       {
         value: 'gemma-3-4b-it',
@@ -183,6 +179,8 @@ export class PromptInputComponent implements OnInit {
     event.stopPropagation();
   }
 
+  selectedModel = signal<string>('');
+
   ngOnInit() {
     this.form.controls.model.valueChanges.subscribe((value) => {
       if (this.form.value.aiProvider === AI_NAME.OPENAI) {
@@ -208,8 +206,6 @@ export class PromptInputComponent implements OnInit {
       this.currentodel = [...[], group];
     });
   }
-
-  constructor() {}
 
   onFormSubmit() {
     this.form.markAllAsTouched();
@@ -243,9 +239,10 @@ export class PromptInputComponent implements OnInit {
       this.setShowSpinner();
 
       // Include gemmaOptions parameter when model is gemma 3
-      const modelOptions = model === 'gemma-3-4b-it' ?
-        { model: `${model}`, options: gemmaOptions || 'text' } :
-        `${model}`;
+      const modelOptions =
+        model === 'gemma-3-4b-it'
+          ? { model: `${model}`, options: gemmaOptions || 'text' }
+          : `${model}`;
 
       this.appService
         .getResponse(

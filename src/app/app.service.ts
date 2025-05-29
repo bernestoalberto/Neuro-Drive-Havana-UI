@@ -4,9 +4,17 @@ import {
   HttpEvent,
   HttpEventType,
   HttpHeaders,
+  httpResource,
   HttpResponse,
 } from '@angular/common/http';
-import { Injectable, Injector, inject, signal, resource } from '@angular/core';
+import {
+  Injectable,
+  Injector,
+  inject,
+  signal,
+  resource,
+  Signal,
+} from '@angular/core';
 import {
   Observable,
   Subject,
@@ -168,6 +176,13 @@ export class AppService {
     });
   }
 
+  /**
+   * Fetches a response from the server based on the provided parameters
+   * @param history Conversation history
+   * @param message User message
+   * @param typeOfAI AI type, defaults to GEMINI
+   * @param model Model name, defaults to gemini-1.5-flash
+   */
   getResponse(
     // Todo: Integrate http resource
 

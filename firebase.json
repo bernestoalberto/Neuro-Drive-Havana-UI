@@ -31,7 +31,13 @@
       "enabled": true,
       "port": 5500
     },
-    "singleProjectMode": true
+    "singleProjectMode": true,
+    "functions": {
+      "port": 5001
+    },
+    "database": {
+      "port": 5002
+    }
   },
   "database": {
     "rules": "database.rules.json"

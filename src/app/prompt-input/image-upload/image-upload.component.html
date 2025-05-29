@@ -5,14 +5,21 @@
         >Text to image?</mat-checkbox
       >
     </section>
+    <h2>1. Open Camera on Button Click (Independent of file selection)</h2>
+    <button id="openCameraButton">Open Camera</button>
+    <button id="closeCameraButton" style="display: none">Close Camera</button>
+    <video id="cameraFeed" autoplay playsinline></video>
+
+    <h2>2. Select a File (This does NOT automatically open the camera)</h2>
     <input
       type="file"
       id="file-input"
       [required]="showFileInput"
       [formControlName]="imageControl"
       #fileInput
-      capture="user"
+      capture="camera"
       accept="image/*"
+      ()="(on)"
       (change)="onFileSelected($event)"
     />
     @if (selectedFile) {
