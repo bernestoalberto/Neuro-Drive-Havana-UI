@@ -189,7 +189,7 @@ export class AppService {
     history: any[],
     message: string,
     typeOfAI: string = AI_NAME.GEMINI,
-    model: string | { model: string; options: string } = 'gemini-1.5-flash'
+    model: string | { model: string; options: string } = 'gemini-2.5-flash'
   ): Observable<any> {
     const options = {
       headers: {
@@ -280,6 +280,32 @@ export class AppService {
     });
   }
 
+  streamChatRespone(
+    history: any[],
+    message: string,
+    typeOfAI: string = AI_NAME.GEMINI,
+    model: string | { model: string; options: string } = 'gemini-2.5-flash',
+    data: Signal<{ value: string } | { error: unknown }>
+  ) {
+    const url = this.getUrlBasedOnModel(typeOfAI);
+
+    fetch(url).then(async (response) => {
+      if (!response.body) return;
+
+      for await (const chunk of response.body) {
+        const chunkText = this.decoder.decode(chunk);
+        data.update((prev: { value: string } | { error: unknown }) => {
+          if ('value' in prev) {
+            return { value: `${prev.value} ${chunkText}` };
+          } else {
+            return { error: chunkText };
+          }
+        });
+      }
+    });
+    return data;
+  }
+
   getUrlBasedOnModel(typeOfAI: string): string {
     let url = `http://${window.location.hostname}:8000/gemini`;
     if (typeOfAI.toLowerCase().includes(AI_NAME.OPENAI.toLowerCase())) {
@@ -354,4 +380,27 @@ export class AppService {
       duration: duration ?? this.durationInSeconds * 1000,
     });
   }
+}
+function experimental(
+  target: AppService,
+  propertyKey: 'streamChatRespone',
+  descriptor: TypedPropertyDescriptor<
+    (
+      history: any[],
+      message: string,
+      typeOfAI: string | undefined,
+      model: string | { model: string; options: string } | undefined,
+      data: Signal<{ value: string } | { error: unknown }>
+    ) => void
+  >
+): void | TypedPropertyDescriptor<
+  (
+    history: any[],
+    message: string,
+    typeOfAI: string | undefined,
+    model: string | { model: string; options: string } | undefined,
+    data: Signal<{ value: string } | { error: unknown }>
+  ) => void
+> {
+  throw new Error('Function not implemented.');
 }

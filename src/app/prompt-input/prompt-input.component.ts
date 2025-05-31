@@ -6,6 +6,8 @@ import {
   WritableSignal,
   OnInit,
   ChangeDetectionStrategy,
+  resource,
+  ResourceRef,
 } from '@angular/core';
 
 import { AppService } from '../app.service';
@@ -87,6 +89,7 @@ export class PromptInputComponent implements OnInit {
     'Who wrote Hotel California?',
   ];
   error = '';
+  characters: ResourceRef<string> = null as any;
   showSpinner: WritableSignal<boolean> = signal(false);
   private readonly appService: AppService = inject(AppService);
   messages = this.appService.messages;
@@ -211,6 +214,7 @@ export class PromptInputComponent implements OnInit {
     this.form.markAllAsTouched();
     if (this.form.valid) {
       this.getResponseFromAI();
+      this.streamChatResponse();
     } else {
       this.appService.openSnackBar();
       this.sendError('Please fill all required fields');
@@ -279,6 +283,41 @@ export class PromptInputComponent implements OnInit {
     }
   }
 
+  /*
+     @bernestoalberto
+      @experimental This function is experimental and subject to change.
+
+    */
+  @experimental
+  streamChatResponse() {
+    try {
+      const { aiProvider, prompt, model, gemmaOptions } = this.form.value;
+      this.setShowSpinner();
+
+      // Include gemmaOptions parameter when model is gemma 3
+      const modelOptions =
+        model === 'gemma-3-4b-it'
+          ? { model: `${model}`, options: gemmaOptions || 'text' }
+          : `${model}`;
+
+      this.characters = resource({
+        stream: async () => {
+          const data = signal<{ value: string } | { error: unknown }>({
+            value: '',
+          });
+          
+          this.appService.streamChatRespone(
+            this.chatHistory(),
+            `${prompt}`,
+            `${aiProvider}`,
+            modelOptions,
+            data
+          );
+        },
+      });
+    } catch {}
+  }
+
   surprise() {
     this.clearStatus.set(true);
     const randomValue = Math.floor(Math.random() * this.surpriseOptions.length);
@@ -311,4 +350,11 @@ export class PromptInputComponent implements OnInit {
   get isModelFieldEmpty(): boolean {
     return this.form.value.model?.length === 0;
   }
+}
+function experimental(
+  target: PromptInputComponent,
+  propertyKey: 'streamChatResponse',
+  descriptor: TypedPropertyDescriptor<() => void>
+): void | TypedPropertyDescriptor<() => void> {
+  throw new Error('Function not implemented.');
 }
