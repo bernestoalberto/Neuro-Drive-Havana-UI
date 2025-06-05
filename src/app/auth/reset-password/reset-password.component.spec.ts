@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { describe, beforeEach, it, expect } from 'vitest';
 import { ResetPasswordComponent } from './reset-password.component';
 
 describe('ResetPasswordComponent', () => {
@@ -8,9 +8,8 @@ describe('ResetPasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ResetPasswordComponent]
-    })
-    .compileComponents();
+      imports: [ResetPasswordComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ResetPasswordComponent);
     component = fixture.componentInstance;

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { describe, beforeEach, it, expect } from 'vitest';
 import { ToolbarComponent } from './toolbar.component';
 
 describe('ToolbarComponent', () => {
@@ -11,7 +11,7 @@ describe('ToolbarComponent', () => {
       imports: [ToolbarComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(ToolbarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { describe, beforeEach, it, expect } from 'vitest';
 import { PromptInputComponent } from './prompt-input.component';
 
 describe('PromptInputComponent', () => {
@@ -8,10 +8,9 @@ describe('PromptInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PromptInputComponent]
-    })
-    .compileComponents();
-    
+      imports: [PromptInputComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(PromptInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { describe, beforeEach, it, expect } from 'vitest';
 import { BypassSecurityComponentComponent } from './bypass-security-component.component';
 
 describe('BypassSecurityComponentComponent', () => {
@@ -8,9 +8,8 @@ describe('BypassSecurityComponentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BypassSecurityComponentComponent]
-    })
-    .compileComponents();
+      imports: [BypassSecurityComponentComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(BypassSecurityComponentComponent);
     component = fixture.componentInstance;

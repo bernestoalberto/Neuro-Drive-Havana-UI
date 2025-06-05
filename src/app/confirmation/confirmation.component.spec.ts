@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { describe, beforeEach, it, expect } from 'vitest';
 import { ConfirmationComponent } from './confirmation.component';
 
 describe('ConfirmationComponent', () => {
@@ -8,9 +8,8 @@ describe('ConfirmationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConfirmationComponent]
-    })
-    .compileComponents();
+      imports: [ConfirmationComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ConfirmationComponent);
     component = fixture.componentInstance;

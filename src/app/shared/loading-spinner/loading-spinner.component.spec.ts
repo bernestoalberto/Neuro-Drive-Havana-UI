@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { describe, beforeEach, it, expect } from 'vitest';
 import { LoadingSpinnerComponent } from './loading-spinner.component';
 
 describe('LoadingSpinnerComponent', () => {
@@ -11,7 +11,7 @@ describe('LoadingSpinnerComponent', () => {
       imports: [LoadingSpinnerComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(LoadingSpinnerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

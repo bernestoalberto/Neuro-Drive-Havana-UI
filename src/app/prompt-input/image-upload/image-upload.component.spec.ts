@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { describe, beforeEach, it, expect } from 'vitest';
 import { ImageUploadComponent } from './image-upload.component';
 
 describe('ImageUploadComponent', () => {
@@ -8,10 +8,9 @@ describe('ImageUploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImageUploadComponent]
-    })
-    .compileComponents();
-    
+      imports: [ImageUploadComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ImageUploadComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

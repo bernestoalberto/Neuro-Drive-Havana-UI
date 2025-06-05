@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DragDropComponent } from './drag-drop.component';
+import { describe, beforeEach, it, expect } from 'vitest';
 
 describe('DragDropComponent', () => {
   let component: DragDropComponent;
