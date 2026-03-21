@@ -305,7 +305,7 @@ export class PromptInputComponent implements OnInit {
           const data = signal<{ value: string } | { error: unknown }>({
             value: '',
           });
-          
+
           this.appService.streamChatRespone(
             this.chatHistory(),
             `${prompt}`,
@@ -313,6 +313,8 @@ export class PromptInputComponent implements OnInit {
             modelOptions,
             data
           );
+
+          return data;
         },
       });
     } catch {}
