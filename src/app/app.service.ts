@@ -14,6 +14,7 @@ import {
   signal,
   resource,
   Signal,
+  WritableSignal,
 } from '@angular/core';
 import {
   Observable,
@@ -61,6 +62,7 @@ export class AppService {
   horizontalPosition: MatSnackBarHorizontalPosition = 'start';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
   durationInSeconds = 5;
+  private readonly decoder = new TextDecoder();
   readonly messages = this._messages.asReadonly();
   readonly generatingInProgress = this._generatingInProgress.asReadonly();
 
@@ -285,15 +287,18 @@ export class AppService {
     message: string,
     typeOfAI: string = AI_NAME.GEMINI,
     model: string | { model: string; options: string } = 'gemini-2.5-flash',
-    data: Signal<{ value: string } | { error: unknown }>
+    data: WritableSignal<{ value: string } | { error: unknown }>
   ) {
     const url = this.getUrlBasedOnModel(typeOfAI);
 
     fetch(url).then(async (response) => {
       if (!response.body) return;
 
-      for await (const chunk of response.body) {
-        const chunkText = this.decoder.decode(chunk);
+      const reader = response.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunkText = this.decoder.decode(value);
         data.update((prev: { value: string } | { error: unknown }) => {
           if ('value' in prev) {
             return { value: `${prev.value} ${chunkText}` };

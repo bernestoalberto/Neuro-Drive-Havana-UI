@@ -6,8 +6,6 @@ import {
   WritableSignal,
   OnInit,
   ChangeDetectionStrategy,
-  resource,
-  ResourceRef,
 } from '@angular/core';
 
 import { AppService } from '../app.service';
@@ -89,7 +87,7 @@ export class PromptInputComponent implements OnInit {
     'Who wrote Hotel California?',
   ];
   error = '';
-  characters: ResourceRef<string> = null as any;
+  characters: WritableSignal<{ value: string } | { error: unknown }> = signal({ value: '' });
   showSpinner: WritableSignal<boolean> = signal(false);
   private readonly appService: AppService = inject(AppService);
   messages = this.appService.messages;
@@ -300,21 +298,14 @@ export class PromptInputComponent implements OnInit {
           ? { model: `${model}`, options: gemmaOptions || 'text' }
           : `${model}`;
 
-      this.characters = resource({
-        stream: async () => {
-          const data = signal<{ value: string } | { error: unknown }>({
-            value: '',
-          });
-          
-          this.appService.streamChatRespone(
-            this.chatHistory(),
-            `${prompt}`,
-            `${aiProvider}`,
-            modelOptions,
-            data
-          );
-        },
-      });
+      this.characters = signal({ value: '' });
+      this.appService.streamChatRespone(
+        this.chatHistory(),
+        `${prompt}`,
+        `${aiProvider}`,
+        modelOptions,
+        this.characters
+      );
     } catch {}
   }
 
