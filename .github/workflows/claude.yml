@@ -37,12 +37,27 @@ jobs:
           claude_args: |
             --allowedTools "Bash(bun install),Bash(bun test:*),Bash(bun run format),Bash(bun typecheck)"
             --model "claude-opus-4-6"
-      -  custom_instructions: |
-  The project is already set up with all dependencies installed.
-  The server is already running at localhost:3000. Logs from it
-  are being written to logs.txt. If needed, you can query the
-  db with the 'sqlite3' cli. If needed, use the mcp__playwright
-  set of tools to launch a browser and interact with the app.
+            
+          custom_instructions: |
+            The project is already set up with all dependencies installed.
+            The server is already running at localhost:3000. Logs from it
+            are being written to logs.txt. If needed, you can query the
+            db with the 'mongodb' cli. If needed, use the mcp__playwright
+            set of tools to launch a browser and interact with the app.
+
+          mcp_config: |
+            {
+              "mcpServers": {
+                "playwright": {
+                  "command": "npx",
+                  "args": [
+                    "@playwright/mcp@latest",
+                    "--allowed-origins",
+                    "localhost:4200;cdn.tailwindcss.com;esm.sh"
+                  ]
+                }
+              }
+            }
 
 
 
