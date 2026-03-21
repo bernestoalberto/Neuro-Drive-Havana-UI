@@ -79,12 +79,12 @@ export class PromptInputComponent implements OnInit {
   index = 0;
   readonly dialog = inject(MatDialog);
   surpriseOptions = [
-    'Who won the latest Novel Peace Prize?',
-    'What is the best Science Fiction movie in 2022 ai ?',
-    'Where does pizza come from?',
-    'Who do you make a BLT sandwich with?',
-    'What is the oldest town in America?',
-    'Who wrote Hotel California?',
+    'Generate an Angular 21 standalone component (standalone: true, no NgModules) with a reactive FormGroup using inject(FormBuilder) and signal-based validation state. Use Angular Material mat-form-field, mat-input, and mat-error to validate email and password fields. Show inline error messages reactively. Use @if control flow. Follow Angular 21 patterns: inject() for DI, signal() for local state, ChangeDetectionStrategy.OnPush.',
+    'Create an Angular 21 standalone data table component using Angular Material mat-table with MatSort, MatPaginator, and a mat-form-field search filter. Use inject() for HttpClient, a signal() for the filter value, and @for with track by id in the template. Wrap data fetching in a takeUntilDestroyed() pipe. Use ChangeDetectionStrategy.OnPush.',
+    'Build an Angular 21 standalone card list component using NgRx Store. Use inject(Store) and toSignal() to select data. Dispatch a load action in ngOnInit. Show a loading skeleton with @if, render cards with @for (track item.id), and display an empty state. Use Angular Material mat-card. Apply ChangeDetectionStrategy.OnPush.',
+    'Generate an Angular 21 standalone dashboard component with Angular Material grid-list (mat-grid-list / mat-grid-tile) showing KPI metric cards. Each card has a mat-icon, a signal-driven animated counter value, a label, and a color-coded trend indicator (up/down arrow). Use inject() for services, computed() for derived values, and @for (track kpi.id) for rendering.',
+    'Create a reusable Angular 21 standalone confirmation dialog component using inject(MAT_DIALOG_DATA) and inject(MatDialogRef). Accept a typed data interface with title, message, confirmLabel, and cancelLabel. Emit typed results on close. Use Angular Material mat-dialog-content and mat-dialog-actions. Export a typed open helper function. Use ChangeDetectionStrategy.OnPush.',
+    'Build an Angular 21 standalone file upload component using signals. Implement drag-and-drop with @HostListener on dragover/drop. Show upload progress via a signal<number>(0) bound to mat-progress-bar. Validate file type and size with computed(). Display error messages with @if. Use inject(HttpClient) with reportProgress: true for upload. Use ChangeDetectionStrategy.OnPush.',
   ];
   error = '';
   characters: WritableSignal<{ value: string } | { error: unknown }> = signal({ value: '' });
@@ -312,7 +312,9 @@ export class PromptInputComponent implements OnInit {
   surprise() {
     this.clearStatus.set(true);
     const randomValue = Math.floor(Math.random() * this.surpriseOptions.length);
-    this.prompt = this.surpriseOptions[randomValue];
+    const picked = this.surpriseOptions[randomValue];
+    this.prompt = picked;
+    this.form.controls.prompt.setValue(picked);
   }
   private readonly scrollOnMessageChanges = effect(() => {
     // run this effect on every messages change
@@ -336,7 +338,7 @@ export class PromptInputComponent implements OnInit {
   }
   clearSearch() {
     this.prompt = '';
-    (this.form as FormGroup).controls[this.promptControl].setValue('');
+    this.form.controls.prompt.setValue('');
   }
   get isModelFieldEmpty(): boolean {
     return this.form.value.model?.length === 0;
@@ -346,6 +348,11 @@ function experimental(
   target: PromptInputComponent,
   propertyKey: 'streamChatResponse',
   descriptor: TypedPropertyDescriptor<() => void>
-): void | TypedPropertyDescriptor<() => void> {
-  throw new Error('Function not implemented.');
+): TypedPropertyDescriptor<() => void> {
+  const original = descriptor.value!;
+  descriptor.value = function (this: PromptInputComponent) {
+    console.warn(`[experimental] ${propertyKey} is experimental and subject to change.`);
+    return original.apply(this);
+  };
+  return descriptor;
 }
