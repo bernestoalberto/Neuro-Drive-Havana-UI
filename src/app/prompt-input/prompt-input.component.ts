@@ -87,7 +87,9 @@ export class PromptInputComponent implements OnInit {
     'Build an Angular 21 standalone file upload component using signals. Implement drag-and-drop with @HostListener on dragover/drop. Show upload progress via a signal<number>(0) bound to mat-progress-bar. Validate file type and size with computed(). Display error messages with @if. Use inject(HttpClient) with reportProgress: true for upload. Use ChangeDetectionStrategy.OnPush.',
   ];
   error = '';
-  characters: WritableSignal<{ value: string } | { error: unknown }> = signal({ value: '' });
+  characters: WritableSignal<{ value: string } | { error: unknown }> = signal({
+    value: '',
+  });
   showSpinner: WritableSignal<boolean> = signal(false);
   private readonly appService: AppService = inject(AppService);
   messages = this.appService.messages;
@@ -154,6 +156,14 @@ export class PromptInputComponent implements OnInit {
     disabled: false,
     model: [{ value: 'llama-3.2-3b-instruct', viewValue: `Llama-3.2` }],
   };
+  claudeModelGroup: ModelGroup = {
+    name: AI_NAME.CLAUDE,
+    disabled: false,
+    model: [
+      { value: 'opus-4.6', viewValue: `Opus 4.6` },
+      { value: 'sonnet-4.6', viewValue: `Sonnet 4.6` },
+    ],
+  };
   currentodel: ModelGroup[] = [];
   aiProviders: AiProvider[] = [
     {
@@ -171,6 +181,10 @@ export class PromptInputComponent implements OnInit {
     {
       name: AI_NAME.LLAMA,
       id: AI_NAME.LLAMA.toLowerCase(),
+    },
+    {
+      name: AI_NAME.CLAUDE,
+      id: AI_NAME.CLAUDE.toLowerCase(),
     },
   ];
 
@@ -203,6 +217,8 @@ export class PromptInputComponent implements OnInit {
         group = this.deepSeekModelGroup;
       } else if (value === AI_NAME.LLAMA) {
         group = this.llamaModelGroup;
+      } else {
+        group = this.claudeModelGroup;
       }
       this.currentodel = [...[], group];
     });
@@ -351,7 +367,9 @@ function experimental(
 ): TypedPropertyDescriptor<() => void> {
   const original = descriptor.value!;
   descriptor.value = function (this: PromptInputComponent) {
-    console.warn(`[experimental] ${propertyKey} is experimental and subject to change.`);
+    console.warn(
+      `[experimental] ${propertyKey} is experimental and subject to change.`
+    );
     return original.apply(this);
   };
   return descriptor;

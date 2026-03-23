@@ -24,7 +24,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { CdkDrag } from '@angular/cdk/drag-drop';
 import { MatFormField } from '@angular/material/form-field';
 import { ModelGroup, AI_NAME, AiProvider } from '../../shared/helper';
 import { MatInputModule } from '@angular/material/input';
@@ -44,8 +43,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatIconModule,
     ReactiveFormsModule,
     FormsModule,
-    CdkDrag,
-    MatFormField,
+  MatFormField,
     MatInputModule,
     MatSelectModule,
     ErrorResultComponent,
@@ -81,6 +79,7 @@ export class ImageUploadComponent implements OnInit {
   uploadStatus: number | undefined;
   showSpinner: WritableSignal<boolean> = signal(false);
   hide = signal(true);
+  isDragging = signal(false);
   aiProviderControl = 'aiProvider';
   modelControl = 'model';
   promptControl = 'prompt';
@@ -247,7 +246,7 @@ export class ImageUploadComponent implements OnInit {
   }
   clearSearch() {
     this.prompt = '';
-    (this.form as FormGroup).controls[this.promptControl].setValue('');
+    this.form.controls.prompt.setValue('');
   }
   get isPromptFieldEmpty(): boolean {
     return this.form.value.prompt?.length === 0;
@@ -359,14 +358,23 @@ export class ImageUploadComponent implements OnInit {
   handleDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    this.isDragging.set(true);
+  }
+
+  handleDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isDragging.set(false);
   }
 
   handleDrop(event: DragEvent) {
-    // Fix this
     event.preventDefault();
-    if (event.dataTransfer) {
-      const file: File = event.dataTransfer.files[0];
-      this.onFileSelected(event);
+    this.isDragging.set(false);
+    if (event.dataTransfer?.files?.length) {
+      this.selectedFile = event.dataTransfer.files[0];
+      this.fileSize = `${(this.selectedFile.size / 1024).toFixed(2)} KB`;
+      const reader = new FileReader();
+      reader.onload = () => { this.previewUrl = reader.result; };
+      reader.readAsDataURL(this.selectedFile);
     }
   }
 }
